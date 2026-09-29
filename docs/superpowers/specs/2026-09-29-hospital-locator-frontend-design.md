@@ -22,6 +22,7 @@ The demo will run on **Next.js (App Router)** with **TypeScript**, **Tailwind CS
 * **Styling**: Tailwind CSS with custom medical theme (Emergency Red, Healthcare Emerald/Teal, Clinical Slate)
 * **Icons**: `lucide-react`
 * **Authentication**: **NextAuth.js** (`next-auth`) with Credentials Provider, JWT session strategy, custom session callbacks exposing `role`, and Next.js middleware for route protection
+* **Backend Architecture**: **Nest.js** architecture for service layer and REST API design (structured modules, controllers, DTOs, and services) instead of Express.js
 * **Maps**: Leaflet + `react-leaflet` with dynamic client-only loading (`ssr: false`) to eliminate hydration mismatches, custom SVG pins, marker clusters, and radius overlays
 * **State Management**: React Context (`AppContext`) with `localStorage` persistence and fallback seed data
 * **Deployment**: Vercel (CLI) + GitHub (public repository: `hospital-locator-nigeria`)
