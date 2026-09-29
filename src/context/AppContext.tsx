@@ -258,34 +258,34 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         ...reviewInput
       };
 
-      setReviews((prevReviews) => {
-        const nextReviews = [newReview, ...prevReviews];
+      // 1. Purely update reviews state
+      setReviews((prevReviews) => [newReview, ...prevReviews]);
 
-        // Recalculate average rating and total review count for the hospital
-        setHospitals((prevHospitals) =>
-          prevHospitals.map((hosp) => {
-            if (hosp._id === newReview.hospitalId) {
-              const matchingReviews = nextReviews.filter((r) => r.hospitalId === hosp._id);
-              const totalRating = matchingReviews.reduce((sum, r) => sum + r.overallRating, 0);
-              const newAverage =
-                matchingReviews.length > 0
-                  ? Math.round((totalRating / matchingReviews.length) * 10) / 10
-                  : newReview.overallRating;
+      // 2. Decoupled rating recalculation for target hospital
+      const hospitalReviews = [
+        newReview,
+        ...reviews.filter((r) => r.hospitalId === newReview.hospitalId)
+      ];
+      const totalRating = hospitalReviews.reduce((sum, r) => sum + r.overallRating, 0);
+      const newAverage =
+        hospitalReviews.length > 0
+          ? Math.round((totalRating / hospitalReviews.length) * 10) / 10
+          : newReview.overallRating;
 
-              return {
+      // 3. Purely update hospitals state
+      setHospitals((prevHospitals) =>
+        prevHospitals.map((hosp) =>
+          hosp._id === newReview.hospitalId
+            ? {
                 ...hosp,
                 averageRating: newAverage,
-                totalReviews: matchingReviews.length
-              };
-            }
-            return hosp;
-          })
-        );
-
-        return nextReviews;
-      });
+                totalReviews: hospitalReviews.length
+              }
+            : hosp
+        )
+      );
     },
-    []
+    [reviews]
   );
 
   // Mutation: Vote review helpfulness
@@ -320,36 +320,39 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Mutation: Delete review and recalculate hospital rating
-  const deleteReview = useCallback((reviewId: string) => {
-    setReviews((prevReviews) => {
-      const target = prevReviews.find((r) => r._id === reviewId);
-      const nextReviews = prevReviews.filter((r) => r._id !== reviewId);
+  const deleteReview = useCallback(
+    (reviewId: string) => {
+      const targetReview = reviews.find((r) => r._id === reviewId);
+      if (!targetReview) return;
 
-      if (target) {
-        setHospitals((prevHospitals) =>
-          prevHospitals.map((hosp) => {
-            if (hosp._id === target.hospitalId) {
-              const matchingReviews = nextReviews.filter((r) => r.hospitalId === hosp._id);
-              const totalRating = matchingReviews.reduce((sum, r) => sum + r.overallRating, 0);
-              const newAverage =
-                matchingReviews.length > 0
-                  ? Math.round((totalRating / matchingReviews.length) * 10) / 10
-                  : 0;
+      // 1. Purely update reviews state
+      setReviews((prevReviews) => prevReviews.filter((r) => r._id !== reviewId));
 
-              return {
+      // 2. Decoupled rating recalculation for remaining reviews
+      const remainingReviews = reviews.filter(
+        (r) => r.hospitalId === targetReview.hospitalId && r._id !== reviewId
+      );
+      const totalRating = remainingReviews.reduce((sum, r) => sum + r.overallRating, 0);
+      const newAverage =
+        remainingReviews.length > 0
+          ? Math.round((totalRating / remainingReviews.length) * 10) / 10
+          : 0;
+
+      // 3. Purely update hospitals state
+      setHospitals((prevHospitals) =>
+        prevHospitals.map((hosp) =>
+          hosp._id === targetReview.hospitalId
+            ? {
                 ...hosp,
                 averageRating: newAverage,
-                totalReviews: matchingReviews.length
-              };
-            }
-            return hosp;
-          })
-        );
-      }
-
-      return nextReviews;
-    });
-  }, []);
+                totalReviews: remainingReviews.length
+              }
+            : hosp
+        )
+      );
+    },
+    [reviews]
+  );
 
   // Mutation: Update hospital emergency capacity status
   const updateHospitalEmergencyStatus = useCallback(
@@ -400,37 +403,40 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
-  // Mutation: Approve facility claim
-  const approveClaim = useCallback((claimId: string, reviewedBy?: string) => {
-    let claimedHospitalId: string | null = null;
-    let claimantUserId: string | null = null;
+  // Mutation: Approve facility claim without closure race conditions
+  const approveClaim = useCallback(
+    (claimId: string, reviewedBy?: string) => {
+      const targetClaim = claims.find((c) => c._id === claimId);
+      if (!targetClaim) return;
 
-    setClaims((prevClaims) =>
-      prevClaims.map((claim) => {
-        if (claim._id === claimId) {
-          claimedHospitalId = claim.hospitalId;
-          claimantUserId = claim.userId;
-          return {
-            ...claim,
-            status: 'approved',
-            reviewedAt: new Date().toISOString(),
-            reviewedBy: reviewedBy || 'admin@demo.com'
-          };
-        }
-        return claim;
-      })
-    );
+      const reviewer = reviewedBy || 'admin@demo.com';
+      const now = new Date().toISOString();
 
-    if (claimedHospitalId && claimantUserId) {
+      // 1. Update claims state
+      setClaims((prevClaims) =>
+        prevClaims.map((claim) =>
+          claim._id === claimId
+            ? {
+                ...claim,
+                status: 'approved',
+                reviewedAt: now,
+                reviewedBy: reviewer
+              }
+            : claim
+        )
+      );
+
+      // 2. Synchronously update corresponding hospital verification and claimedBy
       setHospitals((prevHospitals) =>
         prevHospitals.map((hosp) =>
-          hosp._id === claimedHospitalId
-            ? { ...hosp, verified: true, claimedBy: claimantUserId }
+          hosp._id === targetClaim.hospitalId
+            ? { ...hosp, verified: true, claimedBy: targetClaim.userId }
             : hosp
         )
       );
-    }
-  }, []);
+    },
+    [claims]
+  );
 
   // Mutation: Reject facility claim
   const rejectClaim = useCallback((claimId: string, reason?: string, reviewedBy?: string) => {

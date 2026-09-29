@@ -5,7 +5,12 @@
  * 2. Travel time estimations at 25 km/h urban speed
  * 3. Distance and duration text formatters
  * 4. Radial proximity filtering (10km emergency perimeter)
- * 5. AppContext state mutation logic (rating recalculations, claims, favorites, search history)
+ * 5. AppContext state mutation logic:
+ *    - approveClaim without closure race conditions (verifies hospital verified=true and claimedBy=userId)
+ *    - rejectClaim with rejection reason
+ *    - addReview with decoupled rating/count recalculation
+ *    - deleteReview restoring previous rating/count
+ *    - updateHospitalEmergencyStatus, favorites, notes, and search logs
  */
 
 import {
@@ -19,7 +24,7 @@ import { NIGERIAN_LOCATIONS, DEFAULT_LOCATION } from '../src/data/nigerianLocati
 import { INITIAL_HOSPITALS } from '../src/data/initialHospitals';
 import { INITIAL_REVIEWS } from '../src/data/initialReviews';
 import { INITIAL_CLAIMS, INITIAL_FAVORITES, INITIAL_SEARCH_HISTORY } from '../src/context/AppContext';
-import { Hospital, Review, ClaimRequest, UserFavorite, SearchLog } from '../src/types';
+import { Hospital, Review, ClaimRequest, UserFavorite, SearchLog, EmergencyStatus } from '../src/types';
 
 let passed = 0;
 let failed = 0;
@@ -106,124 +111,223 @@ assert(
 // 3. AppContext State Mutation Logic Verification
 console.log('\n\x1b[34m[3/3] AppContext State Mutation Logic\x1b[0m');
 
-// A. Rating update when adding review
-const targetHospital = { ...INITIAL_HOSPITALS[0] };
-const hospitalId = targetHospital._id;
-const existingReviews = INITIAL_REVIEWS.filter((r) => r.hospitalId === hospitalId);
+// Create test harness state
+let hospitals: Hospital[] = JSON.parse(JSON.stringify(INITIAL_HOSPITALS));
+let reviews: Review[] = JSON.parse(JSON.stringify(INITIAL_REVIEWS));
+let claims: ClaimRequest[] = JSON.parse(JSON.stringify(INITIAL_CLAIMS));
+let favorites: UserFavorite[] = JSON.parse(JSON.stringify(INITIAL_FAVORITES));
+let searchHistory: SearchLog[] = JSON.parse(JSON.stringify(INITIAL_SEARCH_HISTORY));
 
-const simulatedNewReview: Review = {
-  _id: 'rev-test-1',
-  hospitalId,
-  userId: 'user-patient-test',
+// Define context functions matching AppContext.tsx exactly:
+const addReview = (reviewInput: Omit<Review, '_id' | 'createdAt' | 'helpful' | 'notHelpful'> | Review) => {
+  const newReview: Review = {
+    _id: '_id' in reviewInput && reviewInput._id ? reviewInput._id : `rev-${Date.now()}`,
+    createdAt: 'createdAt' in reviewInput && reviewInput.createdAt ? reviewInput.createdAt : new Date().toISOString(),
+    helpful: 'helpful' in reviewInput && typeof reviewInput.helpful === 'number' ? reviewInput.helpful : 0,
+    notHelpful: 'notHelpful' in reviewInput && typeof reviewInput.notHelpful === 'number' ? reviewInput.notHelpful : 0,
+    ...reviewInput
+  };
+
+  reviews = [newReview, ...reviews];
+
+  const hospitalReviews = [
+    newReview,
+    ...reviews.filter((r) => r.hospitalId === newReview.hospitalId && r._id !== newReview._id)
+  ];
+  const totalRating = hospitalReviews.reduce((sum, r) => sum + r.overallRating, 0);
+  const newAverage =
+    hospitalReviews.length > 0
+      ? Math.round((totalRating / hospitalReviews.length) * 10) / 10
+      : newReview.overallRating;
+
+  hospitals = hospitals.map((hosp) =>
+    hosp._id === newReview.hospitalId
+      ? { ...hosp, averageRating: newAverage, totalReviews: hospitalReviews.length }
+      : hosp
+  );
+  return newReview;
+};
+
+const deleteReview = (reviewId: string) => {
+  const targetReview = reviews.find((r) => r._id === reviewId);
+  if (!targetReview) return;
+
+  reviews = reviews.filter((r) => r._id !== reviewId);
+
+  const remainingReviews = reviews.filter((r) => r.hospitalId === targetReview.hospitalId);
+  const totalRating = remainingReviews.reduce((sum, r) => sum + r.overallRating, 0);
+  const newAverage =
+    remainingReviews.length > 0
+      ? Math.round((totalRating / remainingReviews.length) * 10) / 10
+      : 0;
+
+  hospitals = hospitals.map((hosp) =>
+    hosp._id === targetReview.hospitalId
+      ? { ...hosp, averageRating: newAverage, totalReviews: remainingReviews.length }
+      : hosp
+  );
+};
+
+const approveClaim = (claimId: string, reviewedBy?: string) => {
+  const targetClaim = claims.find((c) => c._id === claimId);
+  if (!targetClaim) return;
+
+  const reviewer = reviewedBy || 'admin@demo.com';
+  const now = new Date().toISOString();
+
+  claims = claims.map((claim) =>
+    claim._id === claimId
+      ? { ...claim, status: 'approved', reviewedAt: now, reviewedBy: reviewer }
+      : claim
+  );
+
+  hospitals = hospitals.map((hosp) =>
+    hosp._id === targetClaim.hospitalId
+      ? { ...hosp, verified: true, claimedBy: targetClaim.userId }
+      : hosp
+  );
+};
+
+const rejectClaim = (claimId: string, reason?: string, reviewedBy?: string) => {
+  claims = claims.map((claim) =>
+    claim._id === claimId
+      ? {
+          ...claim,
+          status: 'rejected',
+          rejectionReason: reason || 'Documentation rejected',
+          reviewedAt: new Date().toISOString(),
+          reviewedBy: reviewedBy || 'admin@demo.com'
+        }
+      : claim
+  );
+};
+
+// Test A: approveClaim updates both claim and hospital cleanly
+const pendingClaim = claims.find((c) => c._id === 'claim-1')!;
+assert(Boolean(pendingClaim), 'Found pending claim-1 in initial claims');
+const targetHospBefore = hospitals.find((h) => h._id === pendingClaim.hospitalId)!;
+assert(targetHospBefore.claimedBy === null, 'Target hospital is initially unclaimed');
+
+approveClaim('claim-1', 'admin@demo.com');
+
+const approvedClaimResult = claims.find((c) => c._id === 'claim-1')!;
+assert(approvedClaimResult.status === 'approved', 'approveClaim: claim status set to approved');
+assert(approvedClaimResult.reviewedBy === 'admin@demo.com', 'approveClaim: reviewer recorded');
+
+const targetHospAfter = hospitals.find((h) => h._id === pendingClaim.hospitalId)!;
+assert(targetHospAfter.verified === true, 'approveClaim: hospital verified set to true');
+assert(targetHospAfter.claimedBy === pendingClaim.userId, 'approveClaim: hospital claimedBy matches claimant userId');
+
+// Test A2: approveClaim transitions an unverified hospital to verified: true
+const unverifiedHospital: Hospital = {
+  ...targetHospBefore,
+  _id: 'hosp-unverified-test',
+  name: 'New Community Clinic',
+  verified: false,
+  claimedBy: null
+};
+hospitals.push(unverifiedHospital);
+const newClaim: ClaimRequest = {
+  _id: 'claim-new-clinic',
+  hospitalId: 'hosp-unverified-test',
+  hospitalName: 'New Community Clinic',
+  userId: 'user-rep-clinic',
+  userName: 'Dr. Clinic',
+  userEmail: 'clinic@test.ng',
+  position: 'CMD',
+  documentName: 'CAC.pdf',
+  status: 'pending',
+  createdAt: new Date().toISOString()
+};
+claims.push(newClaim);
+approveClaim('claim-new-clinic', 'admin@demo.com');
+const clinicAfter = hospitals.find((h) => h._id === 'hosp-unverified-test')!;
+assert(clinicAfter.verified === true, 'approveClaim: transitions unverified hospital to verified: true');
+assert(clinicAfter.claimedBy === 'user-rep-clinic', 'approveClaim: binds claimedBy to claimant');
+
+// Test B: rejectClaim updates claim status and records rejection reason
+rejectClaim('claim-1', 'CAC document registration expired', 'admin@demo.com');
+const rejectedClaimResult = claims.find((c) => c._id === 'claim-1')!;
+assert(rejectedClaimResult.status === 'rejected', 'rejectClaim: claim status set to rejected');
+assert(
+  rejectedClaimResult.rejectionReason === 'CAC document registration expired',
+  'rejectClaim: rejectionReason recorded correctly'
+);
+
+// Test C: addReview purely updates reviews and recalculates hospital rating
+const initialLuthReviews = reviews.filter((r) => r.hospitalId === 'hosp-luth');
+const initialReviewCount = initialLuthReviews.length;
+const initialLuthSum = initialLuthReviews.reduce((sum, r) => sum + r.overallRating, 0);
+const initialCalculatedRating = Math.round((initialLuthSum / initialReviewCount) * 10) / 10;
+
+const addedReview = addReview({
+  hospitalId: 'hosp-luth',
+  userId: 'user-patient-tester',
   userName: 'Test Patient',
   overallRating: 5,
   staffRating: 5,
   cleanlinessRating: 5,
   waitTimeRating: 5,
   careQualityRating: 5,
-  reviewText: 'Outstanding emergency service and compassionate care.',
-  helpful: 0,
-  notHelpful: 0,
-  createdAt: new Date().toISOString()
-};
+  reviewText: 'Exceptional triage response and professional doctors.'
+});
 
-const allReviewsAfterAdd = [simulatedNewReview, ...existingReviews];
-const totalRatingSum = allReviewsAfterAdd.reduce((sum, r) => sum + r.overallRating, 0);
-const expectedAverage = Math.round((totalRatingSum / allReviewsAfterAdd.length) * 10) / 10;
-const expectedTotalReviews = allReviewsAfterAdd.length;
+const luthAfterAdd = hospitals.find((h) => h._id === 'hosp-luth')!;
+const luthReviewsAfterAdd = reviews.filter((r) => r.hospitalId === 'hosp-luth');
+const expectedSum = initialLuthSum + 5;
+const expectedAvg = Math.round((expectedSum / (initialReviewCount + 1)) * 10) / 10;
 
+assert(luthReviewsAfterAdd.length === initialReviewCount + 1, 'addReview: reviews list incremented by 1');
+assert(luthAfterAdd.totalReviews === initialReviewCount + 1, 'addReview: hospital totalReviews incremented by 1');
+assert(luthAfterAdd.averageRating === expectedAvg, `addReview: hospital averageRating recalculated to ${expectedAvg}`);
+
+// Test D: deleteReview purely removes review and restores hospital rating
+deleteReview(addedReview._id);
+const luthAfterDelete = hospitals.find((h) => h._id === 'hosp-luth')!;
+const luthReviewsAfterDelete = reviews.filter((r) => r.hospitalId === 'hosp-luth');
+
+assert(luthReviewsAfterDelete.length === initialReviewCount, 'deleteReview: reviews list restored');
+assert(luthAfterDelete.totalReviews === initialReviewCount, 'deleteReview: hospital totalReviews restored');
 assert(
-  expectedAverage >= 1.0 && expectedAverage <= 5.0,
-  `Review recalculation yields valid average rating: ${expectedAverage}`
+  luthAfterDelete.averageRating === initialCalculatedRating,
+  `deleteReview: hospital averageRating restored to ${initialCalculatedRating}`
 );
+
+// Test E: Emergency status mutation
+hospitals = hospitals.map((h) => (h._id === 'hosp-luth' ? { ...h, emergencyStatus: 'critical' as EmergencyStatus } : h));
 assert(
-  expectedTotalReviews === existingReviews.length + 1,
-  `Total reviews count incremented correctly from ${existingReviews.length} to ${expectedTotalReviews}`
+  hospitals.find((h) => h._id === 'hosp-luth')?.emergencyStatus === 'critical',
+  'Emergency status toggled to critical'
 );
 
-// B. Claim approval mutation
-const testClaim: ClaimRequest = {
-  _id: 'claim-test-1',
-  hospitalId: targetHospital._id,
-  hospitalName: targetHospital.name,
-  userId: 'user-rep-new',
-  userName: 'Dr. Test Representative',
-  userEmail: 'rep@test.org',
-  position: 'CMD',
-  documentName: 'License.pdf',
-  status: 'pending',
-  createdAt: new Date().toISOString()
-};
-
-// Simulate approveClaim
-const approvedClaim: ClaimRequest = {
-  ...testClaim,
-  status: 'approved',
-  reviewedAt: new Date().toISOString(),
-  reviewedBy: 'admin@demo.com'
-};
-const hospitalAfterApproval: Hospital = {
-  ...targetHospital,
-  verified: true,
-  claimedBy: approvedClaim.userId
-};
-
-assert(approvedClaim.status === 'approved', 'Claim status updated to approved');
-assert(hospitalAfterApproval.verified === true, 'Hospital verified flag set to true');
-assert(hospitalAfterApproval.claimedBy === 'user-rep-new', 'Hospital claimedBy assigned to claimant');
-
-// C. Claim rejection mutation
-const rejectedClaim: ClaimRequest = {
-  ...testClaim,
-  status: 'rejected',
-  rejectionReason: 'Invalid accreditation certificate',
-  reviewedAt: new Date().toISOString(),
-  reviewedBy: 'admin@demo.com'
-};
-assert(rejectedClaim.status === 'rejected', 'Claim status updated to rejected');
-assert(Boolean(rejectedClaim.rejectionReason), 'Claim rejection records explanation reason');
-
-// D. Emergency status mutation
-const updatedStatusHospital: Hospital = {
-  ...targetHospital,
-  emergencyStatus: 'critical'
-};
-assert(updatedStatusHospital.emergencyStatus === 'critical', 'Emergency status toggled to critical');
-
-// E. Favorites & Personal Notes
-let favoritesList: UserFavorite[] = [...INITIAL_FAVORITES];
-// Toggle add
+// Test F: Favorites & Personal Notes
 const newFavHospId = 'hosp-lasuth';
-favoritesList.push({ hospitalId: newFavHospId, addedAt: new Date().toISOString() });
+favorites.push({ hospitalId: newFavHospId, addedAt: new Date().toISOString() });
+assert(favorites.some((f) => f.hospitalId === newFavHospId), 'Favorite facility successfully added');
+
+const noteText = 'Specialist pediatric center open on weekends.';
+favorites = favorites.map((f) => (f.hospitalId === newFavHospId ? { ...f, note: noteText } : f));
 assert(
-  favoritesList.some((f) => f.hospitalId === newFavHospId),
-  'Favorite facility successfully added'
+  favorites.find((f) => f.hospitalId === newFavHospId)?.note === noteText,
+  'Personal note saved to favorite facility'
 );
 
-// Add note
-const noteText = 'Specialist pediatric center open on weekends.';
-favoritesList = favoritesList.map((f) => (f.hospitalId === newFavHospId ? { ...f, note: noteText } : f));
-const foundFav = favoritesList.find((f) => f.hospitalId === newFavHospId);
-assert(foundFav?.note === noteText, 'Personal note saved to favorite facility');
-
-// Toggle remove
-favoritesList = favoritesList.filter((f) => f.hospitalId !== newFavHospId);
+favorites = favorites.filter((f) => f.hospitalId !== newFavHospId);
 assert(
-  !favoritesList.some((f) => f.hospitalId === newFavHospId),
+  !favorites.some((f) => f.hospitalId === newFavHospId),
   'Favorite facility successfully toggled off / removed'
 );
 
-// F. Search History Logging
-const searchLogs: SearchLog[] = [...INITIAL_SEARCH_HISTORY];
+// Test G: Search History Logging
 const query = 'Pediatric Dialysis';
-searchLogs.unshift({
+searchHistory.unshift({
   _id: 'search-test-1',
   query,
   city: 'Lagos',
   timestamp: new Date().toISOString(),
   resultsCount: 2
 });
-assert(searchLogs[0].query === query, 'Search query successfully prepended to history log');
+assert(searchHistory[0].query === query, 'Search query successfully prepended to history log');
 
 // Reset demo data sanity
 assert(INITIAL_HOSPITALS.length >= 18, 'Initial hospitals dataset populated with >= 18 facilities');
