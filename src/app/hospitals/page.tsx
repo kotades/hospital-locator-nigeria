@@ -36,6 +36,7 @@ import { NIGERIAN_LOCATIONS } from '@/data/nigerianLocations';
 import {
   HospitalFilterState,
   DEFAULT_FILTER_STATE,
+  STATE_OPTIONS,
   FACILITY_TYPE_OPTIONS,
   SERVICE_OPTIONS,
   INSURANCE_OPTIONS,
@@ -83,6 +84,7 @@ function HospitalsContent() {
     const emergencyOnlyParam = searchParams.get('emergencyOnly');
     const emergencyOnly = emergencyOnlyParam === 'true' || emergencyOnlyParam === '1';
     const typeParam = searchParams.get('type') || 'all';
+    const stateParam = searchParams.get('state');
     const sortParam = (searchParams.get('sort') as SortOption) || 'distance';
     const radiusParam = searchParams.get('radius') || searchParams.get('distance');
 
@@ -93,6 +95,7 @@ function HospitalsContent() {
     setFilters((prev) => ({
       ...prev,
       query: q,
+      state: stateParam !== null ? stateParam : prev.state,
       specialty,
       services: services.length > 0 ? services : prev.services,
       insurance,
@@ -252,8 +255,14 @@ function HospitalsContent() {
                         Distances recomputed relative to chosen hub
                       </p>
                     </div>
-                    <div className="max-h-60 overflow-y-auto py-1">
-                      {NIGERIAN_LOCATIONS.map((loc) => {
+                    <div className="max-h-72 overflow-y-auto py-1">
+                      <div className="px-3 py-1 bg-hospital-blue-50/70 text-[10px] font-bold text-hospital-blue-800 uppercase tracking-wider flex items-center justify-between">
+                        <span>⭐ Delta State Hubs (Primary)</span>
+                        <span className="text-[9px] font-normal lowercase bg-hospital-blue-100 text-hospital-blue-700 px-1.5 py-0.5 rounded">
+                          local
+                        </span>
+                      </div>
+                      {NIGERIAN_LOCATIONS.filter((l) => l.state === 'Delta').map((loc) => {
                         const isCurrent = loc.id === activeLocation.id;
                         return (
                           <button
@@ -268,7 +277,35 @@ function HospitalsContent() {
                             }`}
                           >
                             <div className="truncate">
-                              <p className="truncate">{loc.name}</p>
+                              <p className="truncate font-medium">{loc.name}</p>
+                              <p className="text-[10px] text-slate-400 truncate">
+                                {loc.city}, {loc.state}
+                              </p>
+                            </div>
+                            {isCurrent && <Check className="w-3.5 h-3.5 text-hospital-blue-600 shrink-0" />}
+                          </button>
+                        );
+                      })}
+
+                      <div className="px-3 py-1 bg-slate-50 text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-1 border-t border-slate-100">
+                        Other Nigerian Cities
+                      </div>
+                      {NIGERIAN_LOCATIONS.filter((l) => l.state !== 'Delta').map((loc) => {
+                        const isCurrent = loc.id === activeLocation.id;
+                        return (
+                          <button
+                            key={loc.id}
+                            type="button"
+                            onClick={() => {
+                              setSimulatedLocation(loc);
+                              setLocationDropdownOpen(false);
+                            }}
+                            className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-slate-50 transition-colors ${
+                              isCurrent ? 'bg-hospital-blue-50 text-hospital-blue-700 font-bold' : 'text-slate-700'
+                            }`}
+                          >
+                            <div className="truncate">
+                              <p className="truncate font-medium">{loc.name}</p>
                               <p className="text-[10px] text-slate-400 truncate">
                                 {loc.city}, {loc.state}
                               </p>
@@ -431,6 +468,32 @@ function HospitalsContent() {
                   className="w-4 h-4 rounded text-red-600 focus:ring-red-500 border-slate-300"
                 />
               </label>
+            </div>
+
+            {/* 1. State / Geographic Region Filter */}
+            <div className="space-y-1.5 pb-2 border-b border-slate-100">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-hospital-blue-600" />
+                  <span>State / Geographic Zone</span>
+                </label>
+                <span className="text-[10px] font-bold text-hospital-blue-700 bg-hospital-blue-50 px-2 py-0.5 rounded-full border border-hospital-blue-200">
+                  {filters.state === 'Delta' ? 'Delta Primary' : filters.state === 'all' ? 'Nationwide' : filters.state}
+                </span>
+              </div>
+              <select
+                value={filters.state}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, state: e.target.value }))
+                }
+                className="w-full py-2 px-2.5 rounded-xl border border-hospital-blue-300 bg-hospital-blue-50/40 text-xs font-bold text-slate-900 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-hospital-blue-500 shadow-xs"
+              >
+                {STATE_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* 2. Distance Radius Slider (1 km - 50 km from activeLocation) */}
@@ -641,6 +704,80 @@ function HospitalsContent() {
           {/* B. MAIN RESULTS & MAP DISCOVERY CONTAINER                              */}
           {/* --------------------------------------------------------------------- */}
           <div className="flex-1 w-full min-w-0">
+            {/* Quick State Focal Tabs */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 mb-3 scrollbar-none">
+              <button
+                type="button"
+                onClick={() => setFilters((p) => ({ ...p, state: 'Delta' }))}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all shadow-xs ${
+                  filters.state === 'Delta'
+                    ? 'bg-hospital-blue-600 text-white shadow-hospital-blue-200'
+                    : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                <span>🏥 Delta State Healthcare Hub (9)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilters((p) => ({ ...p, state: 'all' }))}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                  filters.state === 'all'
+                    ? 'bg-hospital-blue-600 text-white shadow-xs'
+                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                <span>🌍 All Nigeria (Nationwide)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilters((p) => ({ ...p, state: 'Lagos' }))}
+                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
+                  filters.state === 'Lagos'
+                    ? 'bg-hospital-blue-600 text-white shadow-xs'
+                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                <span>📍 Lagos State</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilters((p) => ({ ...p, state: 'Federal Capital Territory' }))}
+                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
+                  filters.state === 'Federal Capital Territory'
+                    ? 'bg-hospital-blue-600 text-white shadow-xs'
+                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                <span>📍 Abuja (FCT)</span>
+              </button>
+            </div>
+
+            {/* Delta State Center-Point Banner Callout */}
+            {filters.state === 'Delta' && (
+              <div className="bg-hospital-blue-50/90 border border-hospital-blue-200 rounded-2xl p-3.5 mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs">
+                <div className="flex items-center gap-2.5 text-hospital-blue-900">
+                  <div className="w-7 h-7 rounded-xl bg-hospital-blue-600 text-white flex items-center justify-center shrink-0">
+                    <ShieldCheck className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="font-bold text-hospital-blue-950 block">
+                      Delta State Healthcare Directory (Primary Focal Hub)
+                    </span>
+                    <span className="text-hospital-blue-800 text-[11px]">
+                      Showing 9 accredited facilities across Asaba (FMC), Warri, Oghara (DELSUTH), Abraka (DELSU Campus), Agbor, Ughelli, Sapele & Eku.
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setFilters((p) => ({ ...p, state: 'all' }))}
+                  className="inline-flex items-center gap-1 text-hospital-blue-700 font-bold hover:text-hospital-blue-900 shrink-0 self-start sm:self-auto text-xs underline underline-offset-2"
+                >
+                  Show All Nigerian Hospitals →
+                </button>
+              </div>
+            )}
+
             {/* Results bar: Count, Sorting Engine (FR2.5), and Active Filter Pills */}
             <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs mb-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -697,6 +834,20 @@ function HospitalsContent() {
                   <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1">
                     Active:
                   </span>
+
+                  {filters.state !== 'all' && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-hospital-blue-100 text-hospital-blue-900 border border-hospital-blue-200">
+                      Region: {filters.state === 'Delta' ? 'Delta State (Primary)' : filters.state}
+                      <button
+                        type="button"
+                        onClick={() => setFilters((p) => ({ ...p, state: 'all' }))}
+                        className="hover:text-rose-600"
+                        title="Show All Nigeria"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  )}
 
                   {filters.query && (
                     <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700">
@@ -997,6 +1148,26 @@ function HospitalsContent() {
                   className="w-4 h-4 rounded text-red-600 focus:ring-red-500 border-slate-300"
                 />
               </label>
+
+              {/* State / Region (Mobile) */}
+              <div>
+                <label className="font-bold text-slate-800 block mb-1">
+                  State / Geographic Region
+                </label>
+                <select
+                  value={filters.state}
+                  onChange={(e) =>
+                    setFilters((prev) => ({ ...prev, state: e.target.value }))
+                  }
+                  className="w-full p-2.5 rounded-xl border border-hospital-blue-300 bg-hospital-blue-50/50 text-sm font-semibold text-slate-900"
+                >
+                  {STATE_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
               {/* Distance Radius */}
               <div className="space-y-2 p-3 rounded-xl bg-slate-50 border border-slate-200">

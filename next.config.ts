@@ -11,6 +11,15 @@ const nextConfig: NextConfig = {
     ],
     unoptimized: true,
   },
+  async redirects() {
+    return [
+      {
+        source: '/hospital',
+        destination: '/hospitals',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

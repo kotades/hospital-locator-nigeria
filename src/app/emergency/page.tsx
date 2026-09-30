@@ -240,20 +240,66 @@ export default function EmergencyPage() {
         </div>
 
         {/* City Switcher */}
-        <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-5">
-          {NIGERIAN_LOCATIONS.map((city) => (
-            <button
-              key={city.id}
-              onClick={() => setSimulatedLocation(city)}
-              className={`text-xs px-2.5 sm:px-3 py-1.5 rounded-full border transition-all ${
-                activeLocation.id === city.id
-                  ? 'bg-blue-600 border-blue-400 text-white font-semibold shadow-xs'
-                  : 'bg-gray-800 hover:bg-gray-700 border-gray-700 text-gray-300 hover:text-white'
-              }`}
-            >
-              📍 {city.city}
-            </button>
-          ))}
+        <div className="mb-6 space-y-3">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold text-red-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Shield className="w-3.5 h-3.5 text-red-400" />
+                Delta State Emergency Response Hubs (Primary)
+              </span>
+              {activeLocation.state === 'Delta' ? (
+                <span className="text-[11px] bg-red-950/80 text-red-300 border border-red-800/80 px-2 py-0.5 rounded-full font-semibold">
+                  Active Region: {activeLocation.city}
+                </span>
+              ) : (
+                <button
+                  onClick={() => {
+                    const asaba = NIGERIAN_LOCATIONS.find((c) => c.id === 'delta-asaba');
+                    if (asaba) setSimulatedLocation(asaba);
+                  }}
+                  className="text-[11px] bg-red-600 hover:bg-red-500 text-white px-2.5 py-0.5 rounded-full font-bold transition-colors"
+                >
+                  Switch to Delta State Hub
+                </button>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {NIGERIAN_LOCATIONS.filter((c) => c.state === 'Delta').map((city) => (
+                <button
+                  key={city.id}
+                  onClick={() => setSimulatedLocation(city)}
+                  className={`text-xs px-3 py-1.5 rounded-xl border transition-all ${
+                    activeLocation.id === city.id
+                      ? 'bg-red-600 border-red-400 text-white font-bold shadow-md shadow-red-900/40 ring-2 ring-red-500/50'
+                      : 'bg-gray-800/90 hover:bg-gray-700 border-gray-700 text-gray-200 hover:text-white'
+                  }`}
+                >
+                  📍 {city.city} ({city.name.includes('Capital') ? 'FMC Asaba' : city.name.includes('Teaching') ? 'DELSUTH' : city.city})
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <span className="text-xs font-medium text-gray-400 uppercase tracking-wider block mb-2">
+              Other Nigerian Emergency Hubs (Nationwide)
+            </span>
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
+              {NIGERIAN_LOCATIONS.filter((c) => c.state !== 'Delta').map((city) => (
+                <button
+                  key={city.id}
+                  onClick={() => setSimulatedLocation(city)}
+                  className={`text-xs px-2.5 py-1 rounded-lg border transition-all ${
+                    activeLocation.id === city.id
+                      ? 'bg-blue-600 border-blue-400 text-white font-semibold'
+                      : 'bg-gray-900 hover:bg-gray-800 border-gray-800 text-gray-400 hover:text-gray-200'
+                  }`}
+                >
+                  {city.city} ({city.state})
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Map toggle */}

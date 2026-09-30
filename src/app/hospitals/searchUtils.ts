@@ -5,6 +5,7 @@ export type SortOption = 'distance' | 'rating' | 'reviews' | 'name';
 
 export interface HospitalFilterState {
   query: string;
+  state: string; // 'Delta' by default, or 'all', or specific state
   facilityType: string; // 'all' or specific type
   services: string[]; // selected services
   insurance: string; // 'all' or specific insurance
@@ -18,6 +19,7 @@ export interface HospitalFilterState {
 
 export const DEFAULT_FILTER_STATE: HospitalFilterState = {
   query: '',
+  state: 'Delta', // Delta State is the primary focal center
   facilityType: 'all',
   services: [],
   insurance: 'all',
@@ -28,6 +30,18 @@ export const DEFAULT_FILTER_STATE: HospitalFilterState = {
   isDistanceFilterActive: false,
   sortBy: 'distance'
 };
+
+export const STATE_OPTIONS = [
+  { label: 'Delta State (Primary Focus)', value: 'Delta' },
+  { label: 'All Nigeria (Nationwide)', value: 'all' },
+  { label: 'Lagos State', value: 'Lagos' },
+  { label: 'Abuja (Federal Capital Territory)', value: 'Federal Capital Territory' },
+  { label: 'Oyo State (Ibadan)', value: 'Oyo' },
+  { label: 'Rivers State (Port Harcourt)', value: 'Rivers' },
+  { label: 'Kano State', value: 'Kano' },
+  { label: 'Edo State (Benin)', value: 'Edo' },
+  { label: 'Enugu State', value: 'Enugu' }
+];
 
 export const FACILITY_TYPE_OPTIONS = [
   { label: 'All Types', value: 'all' },
@@ -52,6 +66,7 @@ export const SERVICE_OPTIONS = [
 
 export const INSURANCE_OPTIONS = [
   { label: 'All Insurance / HMOs', value: 'all' },
+  { label: 'DSCHC (Delta State Contributory Health)', value: 'DSCHC' },
   { label: 'NHIS (National Health)', value: 'NHIS' },
   { label: 'Hygeia HMO', value: 'Hygeia' },
   { label: 'Reliance HMO', value: 'Reliance' },
@@ -138,6 +153,14 @@ export function filterHospitals(
           !serviceMatch &&
           !insuranceMatch
         ) {
+          return false;
+        }
+      }
+
+      // State Filter (Delta State by default)
+      const stateFilter = filters.state || 'all';
+      if (stateFilter !== 'all') {
+        if (hospital.state.toLowerCase() !== stateFilter.toLowerCase()) {
           return false;
         }
       }

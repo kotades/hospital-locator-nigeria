@@ -127,13 +127,16 @@ export interface AppContextType {
   resetDemoData: () => void;
 }
 
+const CURRENT_DATA_VERSION = 'v5_delta_state_primary';
+
 const STORAGE_KEYS = {
-  HOSPITALS: 'hl_hospitals',
-  REVIEWS: 'hl_reviews',
-  CLAIMS: 'hl_claims',
-  LOCATION: 'hl_active_location',
-  FAVORITES: 'hl_favorites',
-  SEARCH_HISTORY: 'hl_search_history'
+  VERSION: 'hl_data_version_v5',
+  HOSPITALS: 'hl_hospitals_v5',
+  REVIEWS: 'hl_reviews_v5',
+  CLAIMS: 'hl_claims_v5',
+  LOCATION: 'hl_active_location_v5',
+  FAVORITES: 'hl_favorites_v5',
+  SEARCH_HISTORY: 'hl_search_history_v5'
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -152,9 +155,59 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (typeof window === 'undefined') return;
 
     try {
+      const storedVersion = localStorage.getItem(STORAGE_KEYS.VERSION);
+
+      // If version is missing or outdated, clear any stale Lagos cache and seed fresh Delta State data
+      if (storedVersion !== CURRENT_DATA_VERSION) {
+        // Clear all previous stale keys
+        const legacyKeys = [
+          'hl_hospitals',
+          'hl_reviews',
+          'hl_claims',
+          'hl_active_location',
+          'hl_favorites',
+          'hl_search_history',
+          'hl_data_version',
+          'hl_hospitals_v4',
+          'hl_active_location_v4'
+        ];
+        legacyKeys.forEach((key) => localStorage.removeItem(key));
+
+        localStorage.setItem(STORAGE_KEYS.VERSION, CURRENT_DATA_VERSION);
+        localStorage.setItem(STORAGE_KEYS.HOSPITALS, JSON.stringify(INITIAL_HOSPITALS));
+        localStorage.setItem(STORAGE_KEYS.LOCATION, JSON.stringify(DEFAULT_LOCATION));
+        localStorage.setItem(STORAGE_KEYS.REVIEWS, JSON.stringify(INITIAL_REVIEWS));
+        localStorage.setItem(STORAGE_KEYS.CLAIMS, JSON.stringify(INITIAL_CLAIMS));
+        localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(INITIAL_FAVORITES));
+        localStorage.setItem(STORAGE_KEYS.SEARCH_HISTORY, JSON.stringify(INITIAL_SEARCH_HISTORY));
+
+        setHospitals(INITIAL_HOSPITALS);
+        setActiveLocation(DEFAULT_LOCATION);
+        setReviews(INITIAL_REVIEWS);
+        setClaims(INITIAL_CLAIMS);
+        setFavorites(INITIAL_FAVORITES);
+        setSearchHistory(INITIAL_SEARCH_HISTORY);
+        setIsHydrated(true);
+        return;
+      }
+
+      // If version matches, safely hydrate while guaranteeing Delta State hospitals and hub
       const storedHospitals = localStorage.getItem(STORAGE_KEYS.HOSPITALS);
       if (storedHospitals) {
-        setHospitals(JSON.parse(storedHospitals));
+        const parsed: Hospital[] = JSON.parse(storedHospitals);
+        const hasFmcAsaba = parsed.some((h) => h._id === 'hosp-fmc-asaba');
+        if (!hasFmcAsaba) {
+          // Force incorporate all Delta State initial facilities
+          const existingIds = new Set(parsed.map((h) => h._id));
+          const missingDelta = INITIAL_HOSPITALS.filter(
+            (h) => h.state === 'Delta' && !existingIds.has(h._id)
+          );
+          const merged = [...missingDelta, ...parsed];
+          setHospitals(merged);
+          localStorage.setItem(STORAGE_KEYS.HOSPITALS, JSON.stringify(merged));
+        } else {
+          setHospitals(parsed);
+        }
       }
 
       const storedReviews = localStorage.getItem(STORAGE_KEYS.REVIEWS);
@@ -169,7 +222,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
       const storedLocation = localStorage.getItem(STORAGE_KEYS.LOCATION);
       if (storedLocation) {
-        setActiveLocation(JSON.parse(storedLocation));
+        const parsedLoc: NigerianCityLocation = JSON.parse(storedLocation);
+        // If stored location is an old Lagos default, auto-switch to Asaba, Delta State hub
+        if (parsedLoc.id === 'lagos-ikeja' || parsedLoc.id === 'lagos-vi' || parsedLoc.state !== 'Delta') {
+          setActiveLocation(DEFAULT_LOCATION);
+          localStorage.setItem(STORAGE_KEYS.LOCATION, JSON.stringify(DEFAULT_LOCATION));
+        } else {
+          setActiveLocation(parsedLoc);
+        }
+      } else {
+        setActiveLocation(DEFAULT_LOCATION);
       }
 
       const storedFavorites = localStorage.getItem(STORAGE_KEYS.FAVORITES);
@@ -183,6 +245,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (error) {
       console.warn('Error reading application state from localStorage:', error);
+      setHospitals(INITIAL_HOSPITALS);
+      setActiveLocation(DEFAULT_LOCATION);
     } finally {
       setIsHydrated(true);
     }
@@ -535,14 +599,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     if (typeof window !== 'undefined') {
       try {
-        localStorage.removeItem(STORAGE_KEYS.HOSPITALS);
-        localStorage.removeItem(STORAGE_KEYS.REVIEWS);
-        localStorage.removeItem(STORAGE_KEYS.CLAIMS);
-        localStorage.removeItem(STORAGE_KEYS.LOCATION);
-        localStorage.removeItem(STORAGE_KEYS.FAVORITES);
-        localStorage.removeItem(STORAGE_KEYS.SEARCH_HISTORY);
+        localStorage.setItem(STORAGE_KEYS.VERSION, CURRENT_DATA_VERSION);
+        localStorage.setItem(STORAGE_KEYS.HOSPITALS, JSON.stringify(INITIAL_HOSPITALS));
+        localStorage.setItem(STORAGE_KEYS.REVIEWS, JSON.stringify(INITIAL_REVIEWS));
+        localStorage.setItem(STORAGE_KEYS.CLAIMS, JSON.stringify(INITIAL_CLAIMS));
+        localStorage.setItem(STORAGE_KEYS.LOCATION, JSON.stringify(DEFAULT_LOCATION));
+        localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(INITIAL_FAVORITES));
+        localStorage.setItem(STORAGE_KEYS.SEARCH_HISTORY, JSON.stringify(INITIAL_SEARCH_HISTORY));
       } catch (e) {
-        console.error('Failed to clear demo data from localStorage:', e);
+        console.error('Failed to reset demo data in localStorage:', e);
       }
     }
   }, []);
