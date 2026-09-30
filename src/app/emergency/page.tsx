@@ -121,29 +121,32 @@ function ERCard({ hospital, distance, eta, rank }: ERCardProps) {
       </div>
 
       {/* Action buttons */}
-      <div className="flex gap-2 mt-4">
+      <div className="flex flex-col sm:flex-row gap-2 mt-4">
         <a
           href={`tel:${hospital.emergencyPhone}`}
-          className="flex-1 flex items-center justify-center gap-1.5 bg-red-600 hover:bg-red-500 text-white rounded-xl py-2.5 text-sm font-bold transition-colors"
+          className="flex-1 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white rounded-xl py-3 sm:py-2.5 text-sm font-bold transition-colors shadow-sm active:scale-95"
         >
           <Phone className="w-4 h-4" />
-          Call ER
+          Call ER Now
         </a>
-        <a
-          href={`https://maps.google.com/?q=${hospital.location.lat},${hospital.location.lng}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1 flex items-center justify-center gap-1.5 bg-blue-700 hover:bg-blue-600 text-white rounded-xl py-2.5 text-sm font-bold transition-colors"
-        >
-          <Navigation className="w-4 h-4" />
-          Navigate
-        </a>
-        <a
-          href={`/hospitals/${hospital._id}`}
-          className="flex items-center justify-center px-3 bg-gray-700 hover:bg-gray-600 text-white rounded-xl text-sm font-medium transition-colors"
-        >
-          <ChevronRight className="w-4 h-4" />
-        </a>
+        <div className="flex items-center gap-2 flex-1">
+          <a
+            href={`https://maps.google.com/?q=${hospital.location.lat},${hospital.location.lng}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 flex items-center justify-center gap-1.5 bg-blue-700 hover:bg-blue-600 text-white rounded-xl py-2.5 text-sm font-bold transition-colors shadow-sm active:scale-95"
+          >
+            <Navigation className="w-4 h-4" />
+            Navigate
+          </a>
+          <a
+            href={`/hospitals/${hospital._id}`}
+            className="flex items-center justify-center px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-xl text-sm font-medium transition-colors"
+            title="View Details"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </a>
+        </div>
       </div>
     </div>
   );
@@ -153,8 +156,8 @@ export default function EmergencyPage() {
   const { hospitals, activeLocation, setSimulatedLocation } = useAppContext();
   const [mapVisible, setMapVisible] = useState(false);
 
-  const userLat = activeLocation?.lat ?? 6.5244;
-  const userLng = activeLocation?.lng ?? 3.3792;
+  const userLat = activeLocation?.lat ?? 6.1936;
+  const userLng = activeLocation?.lng ?? 6.7355;
 
   const emergencyHospitals = useMemo(() => {
     return hospitals
@@ -187,10 +190,10 @@ export default function EmergencyPage() {
     <div className="min-h-screen bg-gray-950 text-white">
       {/* Critical Banner */}
       <div className="bg-red-700 py-3 px-4 text-center">
-        <div className="flex items-center justify-center gap-2 font-bold text-sm animate-pulse">
-          <AlertTriangle className="w-4 h-4" />
-          EMERGENCY MODE — Showing nearest 24/7 ER hospitals
-          <AlertTriangle className="w-4 h-4" />
+        <div className="flex items-center justify-center gap-2 font-bold text-xs sm:text-sm animate-pulse">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <span>EMERGENCY MODE — Showing nearest 24/7 ER hospitals</span>
+          <AlertTriangle className="w-4 h-4 shrink-0 hidden sm:inline" />
         </div>
       </div>
 
@@ -202,7 +205,7 @@ export default function EmergencyPage() {
             <a
               key={line.number}
               href={`tel:${line.number}`}
-              className="flex items-center gap-2 bg-gray-800 hover:bg-red-900/50 border border-gray-700 hover:border-red-600 rounded-xl px-3 py-2 text-sm font-semibold transition-all"
+              className="flex items-center gap-2 bg-gray-800 hover:bg-red-900/50 border border-gray-700 hover:border-red-600 rounded-xl px-3 py-2 text-sm font-semibold transition-all active:scale-95"
             >
               <span className="text-lg">{line.icon}</span>
               <div>
@@ -216,20 +219,20 @@ export default function EmergencyPage() {
 
       <div className="max-w-5xl mx-auto px-4 py-6">
         {/* Location info */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2 text-sm text-gray-400">
-            <MapPin className="w-4 h-4 text-blue-400" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-gray-400">
+            <MapPin className="w-4 h-4 text-blue-400 shrink-0" />
             <span>
               Searching within{' '}
-              <span className="text-white font-semibold">10 km</span> of your location
+              <span className="text-white font-semibold">10 km</span> of your location:
             </span>
-            <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-0.5 rounded-full">
+            <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-0.5 rounded-full font-medium">
               {activeLocation.city}, {activeLocation.state}
             </span>
           </div>
           <button
             onClick={() => setMapVisible((v) => !v)}
-            className="flex items-center gap-1.5 text-sm text-blue-400 hover:text-blue-300 font-medium"
+            className="flex items-center gap-1.5 text-xs sm:text-sm text-blue-400 hover:text-blue-300 font-medium self-start sm:self-auto"
           >
             {mapVisible ? 'Hide Map' : 'Show Map'}
             <RefreshCw className={`w-3.5 h-3.5 ${mapVisible ? 'rotate-180' : ''} transition-transform`} />
@@ -237,15 +240,15 @@ export default function EmergencyPage() {
         </div>
 
         {/* City Switcher */}
-        <div className="flex flex-wrap gap-2 mb-5">
-          {NIGERIAN_LOCATIONS.slice(0, 5).map((city) => (
+        <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-5">
+          {NIGERIAN_LOCATIONS.map((city) => (
             <button
               key={city.id}
               onClick={() => setSimulatedLocation(city)}
-              className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
+              className={`text-xs px-2.5 sm:px-3 py-1.5 rounded-full border transition-all ${
                 activeLocation.id === city.id
-                  ? 'bg-blue-900/60 border-blue-500 text-white'
-                  : 'bg-gray-800 hover:bg-blue-900/60 border-gray-700 hover:border-blue-500 text-gray-300 hover:text-white'
+                  ? 'bg-blue-600 border-blue-400 text-white font-semibold shadow-xs'
+                  : 'bg-gray-800 hover:bg-gray-700 border-gray-700 text-gray-300 hover:text-white'
               }`}
             >
               📍 {city.city}

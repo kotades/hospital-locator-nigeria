@@ -37,10 +37,10 @@ const TABS = [
 ] as const;
 type TabId = typeof TABS[number]['id'];
 
-const DEMO_USERS = [
-  { id: 'user-patient-1', name: 'Amara Okonkwo',    email: 'patient@demo.com',  role: 'patient',        status: 'active',   joined: '2026-07-12' },
-  { id: 'user-rep-1',     name: 'Dr. Adeyemi Adeleke', email: 'rep@demo.com',   role: 'representative', status: 'active',   joined: '2026-08-01' },
-  { id: 'user-admin-1',   name: 'System Admin',     email: 'admin@demo.com',    role: 'admin',          status: 'active',   joined: '2026-01-01' },
+const SYSTEM_USERS = [
+  { id: 'user-patient-1', name: 'Amara Okonkwo',    email: 'patient@hospital.ng',  role: 'patient',        status: 'active',   joined: '2026-07-12' },
+  { id: 'user-rep-1',     name: 'Dr. Adeyemi Adeleke', email: 'rep@hospital.ng',   role: 'representative', status: 'active',   joined: '2026-08-01' },
+  { id: 'user-admin-1',   name: 'System Admin',     email: 'admin@hospital.ng',    role: 'admin',          status: 'active',   joined: '2026-01-01' },
   { id: 'user-rep-2',     name: 'Dr. Babatunde Sanusi', email: 'sanusi@firstcardiology.ng', role: 'representative', status: 'pending', joined: '2026-09-18' },
 ];
 
@@ -136,7 +136,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-5 sm:py-8">
 
         {/* ── DASHBOARD OVERVIEW ── */}
         {activeTab === 'overview' && (
@@ -409,7 +409,7 @@ export default function AdminDashboard() {
           <div>
             <h2 className="text-lg font-semibold mb-5 flex items-center gap-2">
               <Users className="w-5 h-5 text-blue-400" />
-              User Management ({DEMO_USERS.length})
+              User Management ({SYSTEM_USERS.length})
             </h2>
             <div className="overflow-x-auto rounded-2xl border border-gray-800">
               <table className="w-full text-sm">
@@ -423,7 +423,7 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {DEMO_USERS.map((user) => (
+                  {SYSTEM_USERS.map((user) => (
                     <tr key={user.id} className="border-b border-gray-800 hover:bg-gray-800/40">
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2">

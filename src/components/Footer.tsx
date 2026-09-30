@@ -155,6 +155,12 @@ export function Footer() {
                   Federal Medical Centres
                 </Link>
               </li>
+              <li>
+                <Link href="/about" className="text-slate-400 hover:text-hospital-blue-400 transition-colors flex items-center gap-1.5 font-medium">
+                  <ShieldCheck className="w-3.5 h-3.5 text-hospital-blue-400" />
+                  About Platform & Research
+                </Link>
+              </li>
             </ul>
           </div>
 

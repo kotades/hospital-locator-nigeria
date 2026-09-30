@@ -87,7 +87,7 @@ function HospitalPickerModal({
   );
   return (
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-      <div className="bg-gray-900 rounded-2xl w-full max-w-lg border border-gray-700 overflow-hidden">
+      <div className="bg-gray-900 rounded-2xl w-full max-w-lg border border-gray-700 overflow-hidden max-h-[90dvh] flex flex-col">
         <div className="flex items-center justify-between p-4 border-b border-gray-800">
           <h3 className="text-white font-semibold">Add Hospital to Compare</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-white">
@@ -105,7 +105,7 @@ function HospitalPickerModal({
               className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-xl text-white text-sm focus:outline-none focus:border-blue-500"
             />
           </div>
-          <div className="max-h-80 overflow-y-auto space-y-2">
+          <div className="flex-1 overflow-y-auto space-y-2 max-h-[50dvh] sm:max-h-80">
             {filtered.map((h) => {
               const dist = calculateDistance(userLat, userLng, h.location.lat, h.location.lng);
               return (
@@ -265,13 +265,17 @@ export default function ComparePage() {
 
         {/* Comparison table */}
         {selectedHospitals.length > 0 && (
-          <div className="overflow-x-auto rounded-2xl border border-gray-800">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-900 border-b border-gray-800">
-                  <th className="py-4 px-4 text-left text-xs text-gray-400 uppercase tracking-wider font-medium sticky left-0 bg-gray-900 min-w-[140px]">
-                    Category
-                  </th>
+          <div className="space-y-2">
+            <p className="sm:hidden text-[11px] text-gray-400 text-center flex items-center justify-center gap-1">
+              <span>← Swipe table horizontally to compare →</span>
+            </p>
+            <div className="overflow-x-auto rounded-2xl border border-gray-800">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-gray-900 border-b border-gray-800">
+                    <th className="py-4 px-4 text-left text-xs text-gray-400 uppercase tracking-wider font-medium sticky left-0 bg-gray-900 min-w-[130px] z-10">
+                      Category
+                    </th>
                   {selectedHospitals.map((h) => (
                     <th key={h._id} className="py-4 px-4 text-left min-w-[200px]">
                       <Link
@@ -522,8 +526,9 @@ export default function ComparePage() {
               </tbody>
             </table>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+    </div>
 
       {showPicker && (
         <HospitalPickerModal

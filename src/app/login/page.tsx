@@ -7,9 +7,9 @@ import { signIn } from 'next-auth/react';
 import { LogIn, Eye, EyeOff, AlertCircle, Loader2, Hospital } from 'lucide-react';
 
 const QUICK_LOGINS = [
-  { label: 'Patient Demo', email: 'patient@demo.com', role: 'Patient', color: 'bg-blue-700 hover:bg-blue-600' },
-  { label: 'Rep Demo',     email: 'rep@demo.com',     role: 'Facility Rep', color: 'bg-purple-700 hover:bg-purple-600' },
-  { label: 'Admin Demo',   email: 'admin@demo.com',   role: 'Admin', color: 'bg-red-700 hover:bg-red-600' },
+  { label: 'Patient', email: 'patient@hospital.ng', role: 'Patient', color: 'bg-blue-700 hover:bg-blue-600' },
+  { label: 'Facility Rep', email: 'rep@hospital.ng', role: 'Facility Rep', color: 'bg-purple-700 hover:bg-purple-600' },
+  { label: 'Admin', email: 'admin@hospital.ng', role: 'Admin', color: 'bg-red-700 hover:bg-red-600' },
 ];
 
 function LoginContent() {
@@ -37,7 +37,7 @@ function LoginContent() {
     if (res?.ok) {
       router.push(callbackUrl);
     } else {
-      setError('Invalid email or password. Try a demo account below.');
+      setError('Invalid email or password. Try one of the quick login options below.');
     }
   }
 
@@ -53,9 +53,9 @@ function LoginContent() {
           <p className="text-gray-400 mt-1 text-sm">Sign in to Hospital Locator Nigeria</p>
         </div>
 
-        {/* Quick Demo Logins */}
+        {/* Quick Logins */}
         <div className="mb-6">
-          <p className="text-xs text-gray-500 mb-3 text-center uppercase tracking-wider font-medium">Quick Demo Login</p>
+          <p className="text-xs text-gray-500 mb-3 text-center uppercase tracking-wider font-medium">Quick Login</p>
           <div className="grid grid-cols-3 gap-2">
             {QUICK_LOGINS.map((q) => (
               <button
@@ -140,12 +140,6 @@ function LoginContent() {
             Create account
           </Link>
         </p>
-
-        {/* Demo hint */}
-        <div className="mt-6 bg-gray-900 border border-gray-800 rounded-xl p-4 text-xs text-gray-500 text-center">
-          <strong className="text-gray-400">Demo credentials:</strong> Any demo email with password{' '}
-          <code className="bg-gray-800 px-1.5 py-0.5 rounded text-gray-300">password123</code>
-        </div>
       </div>
     </div>
   );

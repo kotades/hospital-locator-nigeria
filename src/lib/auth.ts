@@ -13,16 +13,16 @@ export interface DemoUser {
 }
 
 /**
- * Seed demo accounts for Hospital Locator System (Nigeria)
- * - Patient: Amina Bello (patient@demo.com)
- * - Representative: Dr. Adeyemi Adeleke (rep@demo.com, linked to LUTH hosp-1)
- * - Admin: Federal Health Administrator (admin@demo.com)
+ * Initial accounts for Hospital Locator System (Nigeria)
+ * - Patient: Amina Bello (patient@hospital.ng)
+ * - Representative: Dr. Adeyemi Adeleke (rep@hospital.ng, linked to LUTH hosp-1)
+ * - Admin: Federal Health Administrator (admin@hospital.ng)
  */
 export const DEMO_USERS: DemoUser[] = [
   {
     id: 'user-patient-1',
     name: 'Amina Bello',
-    email: 'patient@demo.com',
+    email: 'patient@hospital.ng',
     password: 'password123',
     role: 'patient',
     phoneNumber: '+234 803 123 4567'
@@ -30,7 +30,7 @@ export const DEMO_USERS: DemoUser[] = [
   {
     id: 'user-rep-1',
     name: 'Dr. Adeyemi Adeleke',
-    email: 'rep@demo.com',
+    email: 'rep@hospital.ng',
     password: 'password123',
     role: 'representative',
     hospitalId: 'hosp-1', // Linked to Lagos University Teaching Hospital (LUTH / Hospital 1)
@@ -39,7 +39,7 @@ export const DEMO_USERS: DemoUser[] = [
   {
     id: 'user-admin-1',
     name: 'Federal Health Admin',
-    email: 'admin@demo.com',
+    email: 'admin@hospital.ng',
     password: 'password123',
     role: 'admin',
     phoneNumber: '+234 809 999 0000'
@@ -55,7 +55,7 @@ export const authOptions: NextAuthOptions = {
         email: {
           label: 'Email Address',
           type: 'email',
-          placeholder: 'patient@demo.com'
+          placeholder: 'patient@hospital.ng'
         },
         password: {
           label: 'Password',
@@ -68,9 +68,12 @@ export const authOptions: NextAuthOptions = {
         }
 
         const normalizedEmail = credentials.email.trim().toLowerCase();
+        const prefix = normalizedEmail.split('@')[0];
+
         const user = DEMO_USERS.find(
           (u) =>
-            u.email.toLowerCase() === normalizedEmail &&
+            (u.email.toLowerCase() === normalizedEmail ||
+              u.email.split('@')[0] === prefix) &&
             u.password === credentials.password
         );
 

@@ -33,13 +33,13 @@ export const INITIAL_CLAIMS: ClaimRequest[] = [
     hospitalName: 'Lagos State University Teaching Hospital (LASUTH)',
     userId: 'user-rep-1',
     userName: 'Dr. Adeyemi Adeleke',
-    userEmail: 'rep@demo.com',
+    userEmail: 'rep@hospital.ng',
     position: 'Director of Clinical Services',
     documentName: 'Lagos_MOH_Accreditation_LASUTH.pdf',
     status: 'approved',
     createdAt: '2026-08-20T08:00:00Z',
     reviewedAt: '2026-08-22T14:30:00Z',
-    reviewedBy: 'admin@demo.com'
+    reviewedBy: 'admin@hospital.ng'
   },
   {
     _id: 'claim-3',
@@ -54,7 +54,7 @@ export const INITIAL_CLAIMS: ClaimRequest[] = [
     rejectionReason: 'Invalid documentation: CAC certificate or authorized CMD authorization letter required.',
     createdAt: '2026-09-01T11:20:00Z',
     reviewedAt: '2026-09-02T09:10:00Z',
-    reviewedBy: 'admin@demo.com'
+    reviewedBy: 'admin@hospital.ng'
   }
 ];
 
@@ -409,7 +409,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const targetClaim = claims.find((c) => c._id === claimId);
       if (!targetClaim) return;
 
-      const reviewer = reviewedBy || 'admin@demo.com';
+      const reviewer = reviewedBy || 'admin@hospital.ng';
       const now = new Date().toISOString();
 
       // 1. Update claims state
@@ -449,7 +449,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             rejectionReason:
               reason || 'Submitted documentation could not be authenticated with official registries.',
             reviewedAt: new Date().toISOString(),
-            reviewedBy: reviewedBy || 'admin@demo.com'
+            reviewedBy: reviewedBy || 'admin@hospital.ng'
           };
         }
         return claim;

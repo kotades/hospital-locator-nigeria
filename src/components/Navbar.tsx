@@ -150,8 +150,8 @@ export function Navbar() {
               <span className="font-medium text-slate-700 truncate max-w-[140px]" title={activeLocation.name}>
                 {activeLocation.city}
               </span>
-              <span className="text-[10px] text-slate-400 bg-slate-100 px-1 py-0.5 rounded">
-                Simulated
+              <span className="text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded font-medium">
+                {activeLocation.state}
               </span>
             </div>
           </div>
@@ -184,7 +184,7 @@ export function Navbar() {
             {/* Prominent Emergency 24/7 CTA Pill */}
             <Link
               href="/emergency"
-              className="relative inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-full bg-emergency-red-600 hover:bg-emergency-red-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-emergency-red-200 hover:shadow-lg hover:shadow-emergency-red-300 transition-all transform active:scale-95 group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emergency-red-500"
+              className="relative inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-emergency-red-600 hover:bg-emergency-red-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-emergency-red-200 hover:shadow-lg hover:shadow-emergency-red-300 transition-all transform active:scale-95 group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emergency-red-500"
               aria-label="Emergency 24/7 Facility Finder"
             >
               <span className="relative flex h-2 sm:h-2.5 w-2 sm:w-2.5">
@@ -192,7 +192,9 @@ export function Navbar() {
                 <span className="relative inline-flex rounded-full h-2 sm:h-2.5 w-2 sm:w-2.5 bg-white"></span>
               </span>
               <PhoneCall className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white group-hover:rotate-12 transition-transform" />
-              <span className="tracking-wide">Emergency 24/7</span>
+              <span className="tracking-wide">
+                <span className="hidden sm:inline">Emergency </span>24/7
+              </span>
             </Link>
 
             {/* User Auth Section (Desktop) */}

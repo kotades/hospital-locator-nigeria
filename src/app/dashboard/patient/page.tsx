@@ -73,14 +73,14 @@ export default function PatientDashboard() {
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-900 to-indigo-900 px-4 py-10">
+      <div className="bg-gradient-to-r from-blue-900 to-indigo-900 px-4 pt-8 pb-6 sm:py-10">
         <div className="max-w-5xl mx-auto flex items-center gap-4">
           <div className="w-14 h-14 rounded-full bg-blue-500 flex items-center justify-center text-xl font-bold flex-shrink-0">
             {session?.user?.name?.[0] ?? 'P'}
           </div>
           <div>
-            <h1 className="text-2xl font-bold">{session?.user?.name ?? 'Demo Patient'}</h1>
-            <p className="text-blue-200 text-sm">{session?.user?.email ?? 'patient@demo.com'}</p>
+            <h1 className="text-2xl font-bold"><span>{session?.user?.name ?? 'My Account'}</span></h1>
+            <p className="text-blue-200 text-sm">{session?.user?.email ?? 'patient@hospital.ng'}</p>
             <span className="inline-block mt-1 bg-blue-700/60 text-blue-200 text-xs px-2 py-0.5 rounded-full">
               Patient Account
             </span>
@@ -108,7 +108,7 @@ export default function PatientDashboard() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto px-3 sm:px-4 py-5 sm:py-8">
         {/* ── PROFILE ── */}
         {activeTab === 'profile' && (
           <div className="space-y-6">
@@ -133,9 +133,9 @@ export default function PatientDashboard() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
-                  { label: 'Full Name', value: session?.user?.name ?? 'Demo Patient' },
-                  { label: 'Email',     value: session?.user?.email ?? 'patient@demo.com' },
-                  { label: 'Phone',     value: '+234 801 234 5678 (demo)' },
+                  { label: 'Full Name', value: session?.user?.name ?? 'My Account' },
+                  { label: 'Email',     value: session?.user?.email ?? 'patient@hospital.ng' },
+                  { label: 'Phone',     value: '+234 801 234 5678' },
                   { label: 'Location',  value: activeLocation ? `${activeLocation.city ?? 'Custom'}` : 'Lagos, Nigeria' },
                 ].map((field) => (
                   <div key={field.label}>
@@ -146,7 +146,7 @@ export default function PatientDashboard() {
               </div>
               <button className="mt-4 flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300">
                 <Edit2 className="w-3.5 h-3.5" />
-                Edit Profile (demo — not persisted)
+                Edit Profile
               </button>
             </div>
           </div>
@@ -395,7 +395,7 @@ export default function PatientDashboard() {
                     onClick={() => setDeleteConfirm(false)}
                     className="flex-1 py-2 bg-red-700 hover:bg-red-600 rounded-xl text-sm text-white transition-colors"
                   >
-                    Confirm Delete (Demo Only)
+                    Confirm Delete
                   </button>
                 </div>
               ) : (

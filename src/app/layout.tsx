@@ -5,7 +5,6 @@ import { AuthSessionProvider } from '@/context/AuthSessionProvider';
 import { AppContextProvider } from '@/context/AppContext';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
-import { DemoRoleBar } from '@/components/DemoRoleBar';
 
 export const metadata: Metadata = {
   title: 'Hospital Locator Nigeria | Emergency & Geospatial Healthcare Directory',
@@ -50,15 +49,13 @@ export default function RootLayout({
             <Navbar />
 
             {/* Main Application Content Area */}
-            <main className="flex-1 pb-24 md:pb-20">
+            <main className="flex-1">
               {children}
             </main>
 
             {/* Global Emergency Hotlines & Directory Footer */}
             <Footer />
 
-            {/* Floating Persona Switcher & Nigerian City Simulator */}
-            <DemoRoleBar />
           </AppContextProvider>
         </AuthSessionProvider>
       </body>

@@ -32,7 +32,6 @@ async function runTests() {
   // Dynamically import components after .css extension handler is registered
   const { Navbar } = await import('../src/components/Navbar');
   const { Footer } = await import('../src/components/Footer');
-  const { DemoRoleBar } = await import('../src/components/DemoRoleBar');
   const layoutModule = await import('../src/app/layout');
   const RootLayout = layoutModule.default;
   const { metadata, viewport } = layoutModule;
@@ -59,7 +58,6 @@ async function runTests() {
   console.log('\n2. Component Exports:');
   assert(typeof Navbar === 'function', 'Navbar is exported as a React component function');
   assert(typeof Footer === 'function', 'Footer is exported as a React component function');
-  assert(typeof DemoRoleBar === 'function', 'DemoRoleBar is exported as a React component function');
   assert(typeof RootLayout === 'function' || typeof RootLayout === 'object', 'RootLayout is exported as default React component');
 
   // 3. Footer Static Rendering & Content Verification
@@ -134,29 +132,8 @@ async function runTests() {
   assert(navbarPatientHtml.includes('Patient'), 'Navbar displays Patient role badge');
   assert(navbarPatientHtml.includes('Sign Out'), 'Navbar includes Sign Out control when authenticated');
 
-  // Test DemoRoleBar Rendering
-  console.log('\n5. DemoRoleBar Dock Features & Nigerian Cities:');
-  const demoBarHtml = renderToString(
-    React.createElement(MockProviders, null, React.createElement(DemoRoleBar))
-  );
-  assert(demoBarHtml.length > 500, 'DemoRoleBar renders safely in provider tree');
-  assert(demoBarHtml.includes('Guest'), 'DemoRoleBar provides 1-click Guest persona button');
-  assert(demoBarHtml.includes('Patient (Amina)'), 'DemoRoleBar provides Patient (Amina) button');
-  assert(demoBarHtml.includes('Facility Rep (Dr. Okafor)'), 'DemoRoleBar provides Facility Rep button');
-  assert(demoBarHtml.includes('Admin (Admin Dunsimi)'), 'DemoRoleBar provides Admin button');
-  assert(demoBarHtml.includes('Reset Data'), 'DemoRoleBar provides Reset Demo Data button');
-  assert(demoBarHtml.includes('simulated-city-select'), 'DemoRoleBar includes simulated city dropdown selector');
-
-  // Verify all 6 Nigerian Presets are present in DemoRoleBar dropdown
-  NIGERIAN_LOCATIONS.forEach((loc) => {
-    assert(
-      demoBarHtml.includes(loc.name),
-      `DemoRoleBar contains preset option: ${loc.name}`
-    );
-  });
-
-  // 6. Root Layout Structure Verification
-  console.log('\n6. Root Layout HTML Shell & Provider Wrapping:');
+  // 5. Root Layout Structure Verification
+  console.log('\n5. Root Layout HTML Shell & Provider Wrapping:');
   const layoutHtml = renderToString(
     React.createElement(
       RootLayout,
@@ -167,7 +144,6 @@ async function runTests() {
   assert(layoutHtml.includes('Main Test Content'), 'RootLayout successfully renders nested children');
   assert(layoutHtml.includes('<header'), 'RootLayout contains <header> from Navbar');
   assert(layoutHtml.includes('<footer'), 'RootLayout contains <footer> from Footer');
-  assert(layoutHtml.includes('Demo Persona:'), 'RootLayout includes floating DemoRoleBar dock');
 
   console.log('\n--- Test Summary ---');
   console.log(`Passed: ${passedTests}`);

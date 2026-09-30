@@ -162,7 +162,7 @@ export default function RepresentativeDashboard() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto px-3 sm:px-4 py-5 sm:py-8">
         {/* ── OVERVIEW ── */}
         {activeTab === 'overview' && (
           <div className="space-y-6">
@@ -493,9 +493,9 @@ export default function RepresentativeDashboard() {
                       submitClaim({
                         hospitalId: hospital._id,
                         hospitalName: hospital.name,
-                        userId: (session?.user as any)?.id ?? 'user-rep-demo',
-                        userName: session?.user?.name ?? 'Demo Representative',
-                        userEmail: session?.user?.email ?? 'rep@demo.com',
+                        userId: (session?.user as any)?.id ?? 'user-rep-1',
+                        userName: session?.user?.name ?? 'Facility Representative',
+                        userEmail: session?.user?.email ?? 'rep@hospital.ng',
                         position: claimPos,
                         documentName: claimDoc,
                       });

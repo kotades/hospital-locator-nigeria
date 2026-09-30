@@ -2,6 +2,24 @@ import { NigerianCityLocation } from '@/types';
 
 export const NIGERIAN_LOCATIONS: NigerianCityLocation[] = [
   {
+    id: 'delta-asaba',
+    name: 'Asaba - Delta State Capital',
+    city: 'Asaba',
+    state: 'Delta',
+    lat: 6.1936,
+    lng: 6.7355,
+    description: 'Capital of Delta State — South-South Nigeria administrative hub'
+  },
+  {
+    id: 'delta-warri',
+    name: 'Warri - Delta State (Commercial Hub)',
+    city: 'Warri',
+    state: 'Delta',
+    lat: 5.5167,
+    lng: 5.7500,
+    description: 'Major commercial and oil hub of Delta State'
+  },
+  {
     id: 'lagos-ikeja',
     name: 'Lagos - Ikeja (Capital / Mainland)',
     city: 'Ikeja',
