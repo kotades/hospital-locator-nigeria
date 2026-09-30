@@ -136,7 +136,7 @@ export default function PatientDashboard() {
                   { label: 'Full Name', value: session?.user?.name ?? 'My Account' },
                   { label: 'Email',     value: session?.user?.email ?? 'patient@hospital.ng' },
                   { label: 'Phone',     value: '+234 801 234 5678' },
-                  { label: 'Location',  value: activeLocation ? `${activeLocation.city ?? 'Custom'}` : 'Lagos, Nigeria' },
+                  { label: 'Location',  value: activeLocation ? `${activeLocation.city}, ${activeLocation.state}` : 'Asaba, Delta State' },
                 ].map((field) => (
                   <div key={field.label}>
                     <label className="text-xs text-gray-500 uppercase tracking-wider">{field.label}</label>

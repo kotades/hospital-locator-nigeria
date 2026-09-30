@@ -2,6 +2,80 @@ import { Review } from '@/types';
 
 export const INITIAL_REVIEWS: Review[] = [
   {
+    _id: 'rev-fmc-asaba-1',
+    hospitalId: 'hosp-fmc-asaba',
+    userId: 'user-patient-1',
+    userName: 'Chinedu Okeke',
+    overallRating: 5,
+    staffRating: 5,
+    cleanlinessRating: 4,
+    waitTimeRating: 4,
+    careQualityRating: 5,
+    reviewText:
+      'FMC Asaba emergency trauma team was exceptional when my father had an acute hypertensive crisis. The triage nurses along Nnebisi Road gate took him in within two minutes, administered IV stabilization, and transferred him to the intensive care unit. Their NHIS desk was open all night and processed our clearance smoothly.',
+    helpful: 38,
+    notHelpful: 1,
+    response:
+      'Thank you Mr. Okeke. The Federal Medical Centre Asaba clinical team remains committed to providing the highest standard of trauma and critical care in Delta State. We are pleased to know your father received timely stabilization.',
+    responseDate: '2026-09-22T10:15:00Z',
+    createdAt: '2026-09-20T08:30:00Z',
+    visitDate: '2026-09-19'
+  },
+  {
+    _id: 'rev-delsuth-1',
+    hospitalId: 'hosp-delsuth',
+    userId: 'user-patient-2',
+    userName: 'Efeoghene Johnson',
+    overallRating: 5,
+    staffRating: 4,
+    cleanlinessRating: 5,
+    waitTimeRating: 4,
+    careQualityRating: 5,
+    reviewText:
+      'DELSUTH in Oghara is undeniably one of the premier tertiary medical centers in the South-South. As a university student in Delta State, I was referred here for complex orthopedic surgery following a road accident. The consultant surgeons and resident doctors explained every stage of the procedure with immense clarity.',
+    helpful: 29,
+    notHelpful: 0,
+    response:
+      'Thank you for your feedback, Efeoghene. DELSUTH takes pride in serving the Delta State community and higher education students with world-class academic surgery and comprehensive tertiary clinical services.',
+    responseDate: '2026-09-25T11:00:00Z',
+    createdAt: '2026-09-23T14:40:00Z',
+    visitDate: '2026-09-21'
+  },
+  {
+    _id: 'rev-warri-1',
+    hospitalId: 'hosp-central-warri',
+    userId: 'user-patient-3',
+    userName: 'Blessing Mowarin',
+    overallRating: 4,
+    staffRating: 4,
+    cleanlinessRating: 4,
+    waitTimeRating: 3,
+    careQualityRating: 4,
+    reviewText:
+      'Central Hospital Warri provided prompt maternity care during my delivery. The midwives and obstetrics emergency doctors were reassuring and skilled. The facility is easily accessible from Hospital Road.',
+    helpful: 19,
+    notHelpful: 2,
+    createdAt: '2026-09-18T16:20:00Z',
+    visitDate: '2026-09-17'
+  },
+  {
+    _id: 'rev-delsu-abraka-1',
+    hospitalId: 'hosp-delsu-abraka',
+    userId: 'user-patient-1',
+    userName: 'Kome Akpore',
+    overallRating: 5,
+    staffRating: 5,
+    cleanlinessRating: 4,
+    waitTimeRating: 4,
+    careQualityRating: 5,
+    reviewText:
+      'The DELSU university medical team at Abraka campus was swift in managing an acute asthma episode during exam season. Excellent student triage and very caring nursing staff.',
+    helpful: 22,
+    notHelpful: 0,
+    createdAt: '2026-09-26T09:10:00Z',
+    visitDate: '2026-09-25'
+  },
+  {
     _id: 'rev-luth-1',
     hospitalId: 'hosp-luth',
     userId: 'user-patient-1',

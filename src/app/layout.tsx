@@ -9,17 +9,19 @@ import { Footer } from '@/components/Footer';
 export const metadata: Metadata = {
   title: 'Hospital Locator Nigeria | Emergency & Geospatial Healthcare Directory',
   description:
-    'Geospatial discovery platform for accredited Nigerian hospitals, 24/7 emergency trauma units, NHIS/HMO verified clinics, and specialist healthcare facilities across Lagos, Abuja, Ibadan, and nationwide.',
+    'Geospatial discovery platform for accredited hospitals, 24/7 emergency trauma units, NHIS/HMO verified clinics, and specialist healthcare facilities centered in Delta State (Asaba, Warri, Oghara, Abraka) and across Nigeria.',
   keywords: [
+    'Delta State hospitals',
+    'FMC Asaba',
+    'DELSUTH Oghara',
+    'Central Hospital Warri',
     'Nigerian hospitals',
     'Emergency 112 Nigeria',
-    'Trauma Center Lagos Abuja',
+    'Trauma Center Delta State',
     'Hospital Locator Nigeria',
-    'LUTH',
-    'LASUTH',
+    'NHIS hospitals Delta',
+    'Federal Medical Centre Asaba',
     'HEFAMAA accredited',
-    'NHIS hospitals Nigeria',
-    'Federal Medical Centre',
     'Emergency medical service Nigeria'
   ],
   authors: [{ name: 'Sanni Inuoluwadunsimi' }],

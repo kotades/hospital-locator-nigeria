@@ -55,8 +55,8 @@ export default function RepresentativeDashboard() {
 
   const [activeTab, setActiveTab] = useState<TabId>('overview');
 
-  // The demo rep manages hosp-lasuth (hosp-1 in original brief, but seed uses hosp-lasuth)
-  const managedHospitalId = (session?.user as any)?.hospitalId ?? 'hosp-luth';
+  // Facility Representative manages Federal Medical Centre (FMC), Asaba, Delta State
+  const managedHospitalId = (session?.user as any)?.hospitalId ?? 'hosp-fmc-asaba';
   const hospital = hospitals.find((h) => h._id === managedHospitalId) ?? hospitals[0];
 
   const myReviews = useMemo(

@@ -50,16 +50,16 @@ async function runTests() {
   const adminDemo = DEMO_USERS.find((u) => u.role === 'admin');
 
   assert(Boolean(patientDemo), 'Patient demo account exists');
-  assert(patientDemo?.email === 'patient@demo.com', 'Patient email is patient@demo.com');
+  assert(patientDemo?.email === 'patient@hospital.ng', 'Patient email is patient@hospital.ng');
   assert(patientDemo?.password === 'password123', 'Patient password is password123');
 
   assert(Boolean(repDemo), 'Representative demo account exists');
-  assert(repDemo?.email === 'rep@demo.com', 'Representative email is rep@demo.com');
+  assert(repDemo?.email === 'rep@hospital.ng', 'Representative email is rep@hospital.ng');
   assert(repDemo?.password === 'password123', 'Representative password is password123');
-  assert(repDemo?.hospitalId === 'hosp-1', 'Representative is linked to LUTH hosp-1');
+  assert(repDemo?.hospitalId === 'hosp-fmc-asaba', 'Representative is linked to FMC Asaba hosp-fmc-asaba');
 
   assert(Boolean(adminDemo), 'Admin demo account exists');
-  assert(adminDemo?.email === 'admin@demo.com', 'Admin email is admin@demo.com');
+  assert(adminDemo?.email === 'admin@hospital.ng', 'Admin email is admin@hospital.ng');
   assert(adminDemo?.password === 'password123', 'Admin password is password123');
 
   // 3. Verify Authorize Callback with Demo Credentials
@@ -67,7 +67,7 @@ async function runTests() {
 
   // Patient Login
   const authedPatient = await authorizeFn({
-    email: 'patient@demo.com',
+    email: 'patient@hospital.ng',
     password: 'password123'
   }, {} as any);
   assert(Boolean(authedPatient), 'Patient signs in successfully with valid credentials');
@@ -77,17 +77,17 @@ async function runTests() {
 
   // Representative Login
   const authedRep = await authorizeFn({
-    email: 'rep@demo.com',
+    email: 'rep@hospital.ng',
     password: 'password123'
   }, {} as any);
   assert(Boolean(authedRep), 'Representative signs in successfully with valid credentials');
   assert(authedRep?.id === 'user-rep-1', 'Representative user has correct ID user-rep-1');
   assert(authedRep?.role === 'representative', 'Representative user has role "representative"');
-  assert(authedRep?.hospitalId === 'hosp-1', 'Representative user carries hospitalId "hosp-1"');
+  assert(authedRep?.hospitalId === 'hosp-fmc-asaba', 'Representative user carries hospitalId "hosp-fmc-asaba"');
 
   // Admin Login
   const authedAdmin = await authorizeFn({
-    email: 'admin@demo.com',
+    email: 'admin@hospital.ng',
     password: 'password123'
   }, {} as any);
   assert(Boolean(authedAdmin), 'Admin signs in successfully with valid credentials');
@@ -146,8 +146,8 @@ async function runTests() {
 
     assert(populatedToken.id === 'user-rep-1', 'JWT token receives user ID');
     assert(populatedToken.role === 'representative', 'JWT token receives user role');
-    assert(populatedToken.hospitalId === 'hosp-1', 'JWT token receives hospitalId');
-    assert(populatedToken.phoneNumber === '+234 802 312 4567', 'JWT token receives phoneNumber');
+    assert(populatedToken.hospitalId === 'hosp-fmc-asaba', 'JWT token receives hospitalId');
+    assert(populatedToken.phoneNumber === '+234 803 456 7890', 'JWT token receives phoneNumber');
 
     // Subsequent token request without user
     const subsequentToken = await jwtCallback({
@@ -163,7 +163,7 @@ async function runTests() {
         id: '',
         role: 'patient',
         name: 'Dr. Adeyemi Adeleke',
-        email: 'rep@demo.com'
+        email: 'rep@hospital.ng'
       }
     };
 
@@ -177,9 +177,9 @@ async function runTests() {
 
     assert(finalSession.user?.id === 'user-rep-1', 'Session user has transferred ID');
     assert(finalSession.user?.role === 'representative', 'Session user has transferred role "representative"');
-    assert(finalSession.user?.hospitalId === 'hosp-1', 'Session user has transferred hospitalId');
-    assert(finalSession.user?.phoneNumber === '+234 802 312 4567', 'Session user has transferred phoneNumber');
-    assert(finalSession.user?.email === 'rep@demo.com', 'Session user preserves base email');
+    assert(finalSession.user?.hospitalId === 'hosp-fmc-asaba', 'Session user has transferred hospitalId');
+    assert(finalSession.user?.phoneNumber === '+234 803 456 7890', 'Session user has transferred phoneNumber');
+    assert(finalSession.user?.email === 'rep@hospital.ng', 'Session user preserves base email');
   }
 
   // 6. Verify NextAuth Route Handlers

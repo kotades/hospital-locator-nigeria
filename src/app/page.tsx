@@ -278,13 +278,13 @@ export default function HomePage() {
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight mb-4">
             Find Fast, Verified Medical Care{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-teal-300 to-emerald-400">
-              Across Nigeria
+              in Delta State & Across Nigeria
             </span>
           </h1>
 
           <p className="max-w-3xl mx-auto text-base sm:text-lg lg:text-xl text-sky-100/90 mb-8 sm:mb-10 font-normal leading-relaxed">
             Geospatial discovery for accredited hospitals, 24/7 emergency trauma centers,
-            and NHIS/HMO healthcare facilities nearest to you.
+            and NHIS/HMO healthcare facilities centered across Delta State (Asaba, Warri, Oghara, Abraka) and nationwide.
           </p>
 
           {/* Hero Search Box & Auto-Suggestions Dropdown */}
@@ -301,7 +301,7 @@ export default function HomePage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={() => setIsSearchFocused(true)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Search hospital name, specialty (Cardiology), service, or HMO..."
+                  placeholder="Search FMC Asaba, DELSUTH, specialty (Surgery), service, or HMO..."
                   className="w-full text-slate-900 placeholder:text-slate-400 text-sm sm:text-base font-normal bg-transparent focus:outline-none"
                   aria-label="Search hospitals by name, specialty, service, or HMO"
                 />
@@ -532,7 +532,7 @@ export default function HomePage() {
                         Popular Searches
                       </div>
                       <div className="flex flex-wrap gap-1.5 mt-1 px-1">
-                        {['24/7 Emergency', 'Cardiology', 'LASUTH', 'Dialysis', 'NHIS Accredited', 'Maternity'].map(
+                        {['FMC Asaba', 'DELSUTH Oghara', 'Central Hospital Warri', '24/7 Emergency', 'Cardiology', 'NHIS Accredited', 'Maternity'].map(
                           (tag) => (
                             <button
                               key={tag}
@@ -634,7 +634,7 @@ export default function HomePage() {
                 <a
                   href="tel:767"
                   className="font-mono font-bold bg-white/15 hover:bg-white/25 px-2 py-1 rounded border border-white/20 transition-colors"
-                  title="Call Lagos Emergency 767"
+                  title="Call Emergency Toll-Free 767"
                 >
                   767
                 </a>
@@ -712,13 +712,13 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="text-xs font-bold tracking-widest text-hospital-blue-400 uppercase mb-2">
-              Nationwide Geospatial Health Network
+              Delta State & Nationwide Geospatial Health Network
             </h2>
             <p className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Verified Healthcare Delivery by Numbers
+              Verified Healthcare Delivery Across Delta State
             </p>
             <p className="text-sm text-slate-400 mt-2">
-              Continuous monitoring across tertiary teaching centers, state specialists, and private trauma facilities.
+              Continuous monitoring across Delta tertiary apex centers (FMC Asaba, DELSUTH Oghara), state hospitals in Warri, Agbor, Ughelli, and private trauma facilities.
             </p>
           </div>
 

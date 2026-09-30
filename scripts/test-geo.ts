@@ -333,7 +333,7 @@ assert(searchHistory[0].query === query, 'Search query successfully prepended to
 assert(INITIAL_HOSPITALS.length >= 18, 'Initial hospitals dataset populated with >= 18 facilities');
 assert(INITIAL_REVIEWS.length >= 20, 'Initial reviews dataset populated with >= 20 reviews');
 assert(INITIAL_CLAIMS.length >= 3, 'Initial claims dataset populated with >= 3 claims');
-assert(DEFAULT_LOCATION.id === 'lagos-ikeja', 'Default location points to Lagos - Ikeja');
+assert(DEFAULT_LOCATION.id === 'delta-asaba', 'Default location points to Delta State - Asaba (FMC Asaba hub)');
 
 console.log('\n======================================================');
 console.log(`Results: \x1b[32m${passed} passed\x1b[0m, \x1b[${failed > 0 ? '31' : '32'}m${failed} failed\x1b[0m`);

@@ -17,25 +17,25 @@ import { DEFAULT_LOCATION } from '@/data/nigerianLocations';
 export const INITIAL_CLAIMS: ClaimRequest[] = [
   {
     _id: 'claim-1',
-    hospitalId: 'hosp-first-cardiology',
-    hospitalName: 'First Cardiology Consultants, Ikoyi',
+    hospitalId: 'hosp-delsuth',
+    hospitalName: 'Delta State University Teaching Hospital (DELSUTH)',
     userId: 'user-rep-2',
-    userName: 'Dr. Babatunde Sanusi',
-    userEmail: 'sanusi@firstcardiology.ng',
+    userName: 'Dr. Efeoghene Oghenekaro',
+    userEmail: 'oghenekaro@delsuth.edu.ng',
     position: 'Chief Medical Director',
-    documentName: 'CAC_Certificate_RC891244.pdf',
+    documentName: 'DELSUTH_CMD_Authorization_Oghara.pdf',
     status: 'pending',
     createdAt: '2026-09-18T10:15:00Z'
   },
   {
     _id: 'claim-2',
-    hospitalId: 'hosp-lasuth',
-    hospitalName: 'Lagos State University Teaching Hospital (LASUTH)',
+    hospitalId: 'hosp-fmc-asaba',
+    hospitalName: 'Federal Medical Centre (FMC), Asaba',
     userId: 'user-rep-1',
     userName: 'Dr. Adeyemi Adeleke',
     userEmail: 'rep@hospital.ng',
     position: 'Director of Clinical Services',
-    documentName: 'Lagos_MOH_Accreditation_LASUTH.pdf',
+    documentName: 'Delta_MOH_Accreditation_FMC_Asaba.pdf',
     status: 'approved',
     createdAt: '2026-08-20T08:00:00Z',
     reviewedAt: '2026-08-22T14:30:00Z',
@@ -43,15 +43,15 @@ export const INITIAL_CLAIMS: ClaimRequest[] = [
   },
   {
     _id: 'claim-3',
-    hospitalId: 'hosp-fmc-ebute-metta',
-    hospitalName: 'Federal Medical Centre (FMC), Ebute Metta',
+    hospitalId: 'hosp-central-warri',
+    hospitalName: 'Central Hospital, Warri',
     userId: 'user-unverified',
     userName: 'Kelechi Nwosu',
     userEmail: 'k.nwosu@gmail.com',
-    position: 'IT Intern',
+    position: 'Administrative Staff',
     documentName: 'Staff_ID_Expired.jpg',
     status: 'rejected',
-    rejectionReason: 'Invalid documentation: CAC certificate or authorized CMD authorization letter required.',
+    rejectionReason: 'Invalid documentation: Official Delta State Ministry of Health authorization letter required.',
     createdAt: '2026-09-01T11:20:00Z',
     reviewedAt: '2026-09-02T09:10:00Z',
     reviewedBy: 'admin@hospital.ng'
@@ -60,13 +60,13 @@ export const INITIAL_CLAIMS: ClaimRequest[] = [
 
 export const INITIAL_FAVORITES: UserFavorite[] = [
   {
-    hospitalId: 'hosp-luth',
-    note: 'Pediatric emergency contact: Dr. Ade. Recommended for intensive neonatal care.',
+    hospitalId: 'hosp-fmc-asaba',
+    note: 'Apex Federal Medical Centre in Asaba. 24/7 Level I trauma and ICU. Dr. Okonkwo on emergency roster.',
     addedAt: '2026-09-15T08:30:00Z'
   },
   {
-    hospitalId: 'hosp-evercare',
-    note: 'Level I trauma and MRI diagnostics center. Open 24/7.',
+    hospitalId: 'hosp-delsuth',
+    note: 'Oghara teaching hospital — exceptional orthopedic, pediatrics, and surgical suites for students and South-South residents.',
     addedAt: '2026-09-20T12:00:00Z'
   }
 ];
@@ -74,18 +74,26 @@ export const INITIAL_FAVORITES: UserFavorite[] = [
 export const INITIAL_SEARCH_HISTORY: SearchLog[] = [
   {
     _id: 'search-1',
-    query: 'Cardiology 24/7',
-    city: 'Lagos',
-    specialty: 'Cardiology',
+    query: '24/7 Emergency',
+    city: 'Asaba',
+    specialty: 'Trauma Care',
     timestamp: '2026-09-28T16:20:00Z',
-    resultsCount: 4
+    resultsCount: 5
   },
   {
     _id: 'search-2',
-    query: 'Emergency ICU',
-    city: 'Ikeja',
+    query: 'FMC Asaba',
+    city: 'Asaba',
     timestamp: '2026-09-29T10:00:00Z',
-    resultsCount: 6
+    resultsCount: 1
+  },
+  {
+    _id: 'search-3',
+    query: 'DELSUTH Oghara',
+    city: 'Oghara',
+    specialty: 'Surgery',
+    timestamp: '2026-09-29T14:30:00Z',
+    resultsCount: 2
   }
 ];
 

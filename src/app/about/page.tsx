@@ -88,12 +88,12 @@ export default function AboutPage() {
             <span className="text-hospital-blue-200 text-sm font-semibold uppercase tracking-widest">About This Platform</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-bold mb-6 leading-tight">
-            Making Nigerian Healthcare<br className="hidden sm:block" /> Discoverable for Everyone
+            Making Delta State & Nigerian Healthcare<br className="hidden sm:block" /> Discoverable for Everyone
           </h1>
           <p className="text-hospital-blue-100 text-base sm:text-lg max-w-2xl leading-relaxed">
-            Hospital Locator Nigeria is a geospatial healthcare discovery platform that connects patients
-            with accredited hospitals, emergency trauma units, specialist clinics, and NHIS/HMO-verified
-            facilities — across Lagos, Abuja, Delta, Ibadan, Port Harcourt, Kano, and growing.
+            Hospital Locator Nigeria is a geospatial healthcare discovery platform centered in Delta State,
+            connecting students, families, and residents with accredited hospitals, emergency trauma units,
+            and NHIS/HMO-verified facilities — across Asaba, Warri, Oghara, Abraka, Agbor, and nationwide.
           </p>
           <div className="flex flex-wrap gap-3 mt-8">
             <Link
@@ -258,14 +258,13 @@ export default function AboutPage() {
               Hospital Locator Nigeria — CSC Final Project
             </h2>
             <p className="text-slate-700 leading-relaxed mb-4">
-              This platform was developed as a Computer Science (CSC) academic project to demonstrate
-              real-world system analysis and design principles — including a full ERD, use case analysis,
-              functional requirements specification, and 3-tier application architecture.
+              This platform was researched and engineered within Delta State as a Computer Science (CSC) final year project,
+              demonstrating real-world system analysis, design principles, and geospatial indexing — including a full ERD,
+              use case analysis, functional requirements specification, and 3-tier application architecture.
             </p>
             <p className="text-slate-700 leading-relaxed mb-6">
-              The system was designed with Nigeria&apos;s healthcare access challenges in mind, aiming to
-              bridge the information gap between patients and healthcare providers through geospatial
-              technology and verified data.
+              With Delta State as our primary epicenter (covering FMC Asaba, DELSUTH Oghara, Central Hospital Warri, and community health centers),
+              the system addresses Nigeria&apos;s critical healthcare accessibility gap by connecting patients directly to verified 24/7 emergency capacity.
             </p>
             <div className="flex flex-wrap gap-3">
               <a

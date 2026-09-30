@@ -61,11 +61,11 @@ export function Footer() {
               <a
                 href="tel:767"
                 className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 font-bold text-sm shadow-md transition-all group"
-                title="Call 767 - Lagos State Emergency Service"
+                title="Call 767 - Toll-Free Emergency Line"
               >
                 <PhoneCall className="w-4 h-4 text-emerald-400 group-hover:rotate-12 transition-transform" />
                 <span>767</span>
-                <span className="text-[11px] font-normal text-slate-300">Lagos State</span>
+                <span className="text-[11px] font-normal text-slate-300">Toll-Free</span>
               </a>
 
               {/* Hotline 122 */}
@@ -101,7 +101,7 @@ export function Footer() {
             </Link>
 
             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-              A specialized geospatial discovery platform for verified hospitals, 24/7 trauma emergency departments, and certified medical specialists across Lagos, Abuja, Ibadan, Port Harcourt, Kano, and all 36 Nigerian states.
+              A specialized geospatial discovery platform for verified hospitals, 24/7 trauma emergency departments, and certified medical specialists centered across Delta State (Asaba, Warri, Oghara, Abraka, Agbor), Lagos, Abuja, and nationwide.
             </p>
 
             <div className="flex items-center gap-2 text-xs text-slate-400">
@@ -116,7 +116,7 @@ export function Footer() {
             <div className="pt-2">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                MOH & HEFAMAA Accredited Facilities Only
+                Delta State MOH & FMoH Accredited Facilities
               </span>
             </div>
           </div>
@@ -242,12 +242,34 @@ export function Footer() {
               </li>
               <li>
                 <a
+                  href="https://deltastate.gov.ng/ministry-of-health"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-slate-400 hover:text-white transition-colors inline-flex items-center gap-1"
+                >
+                  Delta State MOH
+                  <ExternalLink className="w-3 h-3 text-slate-500" />
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://dschc.org.ng"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-slate-400 hover:text-white transition-colors inline-flex items-center gap-1"
+                >
+                  Delta State DSCHC
+                  <ExternalLink className="w-3 h-3 text-slate-500" />
+                </a>
+              </li>
+              <li>
+                <a
                   href="https://hefamaa.lagosstate.gov.ng"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-slate-400 hover:text-white transition-colors inline-flex items-center gap-1"
                 >
-                  Lagos HEFAMAA
+                  HEFAMAA Registry
                   <ExternalLink className="w-3 h-3 text-slate-500" />
                 </a>
               </li>
@@ -265,7 +287,7 @@ export function Footer() {
                 Ministry of Health Accreditation & Emergency Dispatch Disclaimer
               </h4>
               <p className="text-[11px] sm:text-xs text-slate-400 leading-relaxed">
-                Hospital Locator (Nigeria) compiles facility accreditations, emergency department capacities, trauma accreditations, and medical service listings in accordance with Federal Ministry of Health (FMoH) and State Health Facility Monitoring and Accreditation Agency (HEFAMAA) guidelines. While operational hours and status indicators are updated by verified facility representatives, life-threatening emergencies must not wait for online validation. In acute trauma or distress, immediately dial <strong>112</strong> or report directly to the nearest emergency department.
+                Hospital Locator (Nigeria) compiles facility accreditations, emergency department capacities, trauma accreditations, and medical service listings in accordance with Federal Ministry of Health (FMoH) and State Health Facility Monitoring guidelines. While operational hours and status indicators are updated by verified facility representatives, life-threatening emergencies must not wait for online validation. In acute trauma or distress, immediately dial <strong>112</strong> or report directly to the nearest emergency department.
               </p>
             </div>
           </div>
@@ -275,10 +297,10 @@ export function Footer() {
         <div className="mt-8 pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <div className="text-center sm:text-left">
             <p className="text-slate-400 font-medium">
-              CSC Final Year Project — Developed by <span className="text-white font-semibold">Sanni Inuoluwadunsimi</span>
+              CSC Final Year Project — Developed in Delta State by <span className="text-white font-semibold">Sanni Inuoluwadunsimi</span>
             </p>
             <p className="text-[11px] text-slate-500">
-              Department of Computer Science • Geospatial Healthcare Information System (GHIS)
+              Department of Computer Science • Delta State & Nigerian Geospatial Health Information System
             </p>
           </div>
 

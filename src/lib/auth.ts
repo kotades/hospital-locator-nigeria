@@ -33,8 +33,8 @@ export const DEMO_USERS: DemoUser[] = [
     email: 'rep@hospital.ng',
     password: 'password123',
     role: 'representative',
-    hospitalId: 'hosp-1', // Linked to Lagos University Teaching Hospital (LUTH / Hospital 1)
-    phoneNumber: '+234 802 312 4567'
+    hospitalId: 'hosp-fmc-asaba', // Linked to Federal Medical Centre (FMC), Asaba, Delta State
+    phoneNumber: '+234 803 456 7890'
   },
   {
     id: 'user-admin-1',

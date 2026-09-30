@@ -8,7 +8,7 @@ export const NIGERIAN_LOCATIONS: NigerianCityLocation[] = [
     state: 'Delta',
     lat: 6.1936,
     lng: 6.7355,
-    description: 'Capital of Delta State — South-South Nigeria administrative hub'
+    description: 'Capital of Delta State — Administrative center and FMC Asaba apex hospital hub'
   },
   {
     id: 'delta-warri',
@@ -17,7 +17,43 @@ export const NIGERIAN_LOCATIONS: NigerianCityLocation[] = [
     state: 'Delta',
     lat: 5.5167,
     lng: 5.7500,
-    description: 'Major commercial and oil hub of Delta State'
+    description: 'Major commercial city of Delta State — Central Hospital Warri and oil corridor'
+  },
+  {
+    id: 'delta-oghara',
+    name: 'Oghara - Delta State (Teaching Hospital Hub)',
+    city: 'Oghara',
+    state: 'Delta',
+    lat: 5.7400,
+    lng: 5.8200,
+    description: 'Home of DELSUTH — Delta State University Teaching Hospital and tertiary referral center'
+  },
+  {
+    id: 'delta-abraka',
+    name: 'Abraka - Delta State (University Hub)',
+    city: 'Abraka',
+    state: 'Delta',
+    lat: 5.7917,
+    lng: 6.1028,
+    description: 'Delta State University (DELSU) main campus & academic medical center community'
+  },
+  {
+    id: 'delta-agbor',
+    name: 'Agbor - Delta State (Ika Hub)',
+    city: 'Agbor',
+    state: 'Delta',
+    lat: 6.2550,
+    lng: 6.1950,
+    description: 'Major transit and health corridor along Benin-Asaba expressway — Central Hospital Agbor'
+  },
+  {
+    id: 'delta-ughelli',
+    name: 'Ughelli - Delta State (Central Hub)',
+    city: 'Ughelli',
+    state: 'Delta',
+    lat: 5.4950,
+    lng: 5.9980,
+    description: 'Delta Central commercial and healthcare service center'
   },
   {
     id: 'lagos-ikeja',
